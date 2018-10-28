@@ -5,20 +5,6 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeonamesAPI.Service", "GeonamesAPI\GeonamesAPI.Service.csproj", "{1618A657-E390-49ED-9465-5A7EB0672CA3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{C43773FE-62E0-4BE2-A9F8-9F9A1F737637}"
-	ProjectSection(SolutionItems) = preProject
-		..\GeonamesWebAPI\01 Database and Table Creation.sql = ..\GeonamesWebAPI\01 Database and Table Creation.sql
-		..\GeonamesWebAPI\02 Data Import.sql = ..\GeonamesWebAPI\02 Data Import.sql
-		..\GeonamesWebAPI\03 Post Data Import Processing of Tables.sql = ..\GeonamesWebAPI\03 Post Data Import Processing of Tables.sql
-		..\GeonamesWebAPI\04 Creation of RowVersion in Tables.sql = ..\GeonamesWebAPI\04 Creation of RowVersion in Tables.sql
-		..\GeonamesWebAPI\05 Creation of Constraints.sql = ..\GeonamesWebAPI\05 Creation of Constraints.sql
-		..\GeonamesWebAPI\06 Creation of Indexes.sql = ..\GeonamesWebAPI\06 Creation of Indexes.sql
-		..\GeonamesWebAPI\07 Creation of TVPs.sql = ..\GeonamesWebAPI\07 Creation of TVPs.sql
-		..\GeonamesWebAPI\08 Creation of SPs.sql = ..\GeonamesWebAPI\08 Creation of SPs.sql
-		..\GeonamesWebAPI\09 Clean Up.sql = ..\GeonamesWebAPI\09 Clean Up.sql
-		..\GeonamesWebAPI\Fiddler Links.txt = ..\GeonamesWebAPI\Fiddler Links.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeonamesAPI.Domain", "GeonamesAPI.Domain\GeonamesAPI.Domain.csproj", "{03AD02A4-B1D3-4512-B54D-2D87E3F6FD29}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeonamesAPI.DALHelper", "GeonamesAPI.DALHelper\GeonamesAPI.DALHelper.csproj", "{6E8D0A73-32EF-4F55-B961-E35438959CBF}"
@@ -26,6 +12,19 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeonamesAPI.SQLRepository", "GeonamesAPI.SQLRepository\GeonamesAPI.SQLRepository.csproj", "{EABEA9E3-0A19-4369-AFE8-A845E9FC4541}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeonamesAPI.Service.Integrated.Tests", "GeonamesAPI.Service.Integrated.Tests\GeonamesAPI.Service.Integrated.Tests.csproj", "{71CD7C1B-23C9-49CC-985F-44D75CC1537D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GeonamesAPI.DBScripts", "GeonamesAPI.DBScripts", "{C6A6A465-C8FF-4E85-AABD-FDA397323625}"
+	ProjectSection(SolutionItems) = preProject
+		GeonamesAPI.DBScripts\01 Database and Table Creation.sql = GeonamesAPI.DBScripts\01 Database and Table Creation.sql
+		GeonamesAPI.DBScripts\02 Data Import.sql = GeonamesAPI.DBScripts\02 Data Import.sql
+		GeonamesAPI.DBScripts\03 Post Data Import Processing of Tables.sql = GeonamesAPI.DBScripts\03 Post Data Import Processing of Tables.sql
+		GeonamesAPI.DBScripts\04 Creation of RowVersion in Tables.sql = GeonamesAPI.DBScripts\04 Creation of RowVersion in Tables.sql
+		GeonamesAPI.DBScripts\05 Creation of Constraints.sql = GeonamesAPI.DBScripts\05 Creation of Constraints.sql
+		GeonamesAPI.DBScripts\06 Creation of Indexes.sql = GeonamesAPI.DBScripts\06 Creation of Indexes.sql
+		GeonamesAPI.DBScripts\07 Creation of TVPs.sql = GeonamesAPI.DBScripts\07 Creation of TVPs.sql
+		GeonamesAPI.DBScripts\08 Creation of SPs.sql = GeonamesAPI.DBScripts\08 Creation of SPs.sql
+		GeonamesAPI.DBScripts\09 Clean Up.sql = GeonamesAPI.DBScripts\09 Clean Up.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
