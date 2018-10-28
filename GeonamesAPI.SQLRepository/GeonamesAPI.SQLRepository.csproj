@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeonamesAPI.DALHelper\GeonamesAPI.DALHelper.csproj" />
+    <ProjectReference Include="..\GeonamesAPI.Domain\GeonamesAPI.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
