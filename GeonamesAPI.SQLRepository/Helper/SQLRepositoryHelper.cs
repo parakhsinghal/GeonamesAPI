@@ -1,84 +1,93 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace GeonamesAPI.SQLRepository.Helper
 {
-    public static class SQLRepositoryHelper
+    internal class SQLRepositoryHelper
     {
+        private readonly IConfiguration continentSection, countrySection, languageSection, featureCategorySection, featureCodeSection, timezoneSection, stateSection, rawPostalCodeSection;
+
+        public SQLRepositoryHelper(IConfiguration config)
+        {
+            continentSection = config.GetSection("SQLRepository").GetSection("ContinentSQLRepository");
+            countrySection = config.GetSection("SQLRepository").GetSection("CountrySQLRepository");
+            languageSection = config.GetSection("SQLRepository").GetSection("LanguageSQLRepository");
+            featureCategorySection = config.GetSection("SQLRepository").GetSection("FeatureCategorySQLRepository");
+            featureCodeSection = config.GetSection("SQLRepository").GetSection("FeatureCodeSQLRepository");
+            timezoneSection = config.GetSection("SQLRepository").GetSection("TimeZoneSQLRepository"); ;
+            stateSection = config.GetSection("SQLRepository").GetSection("StateSQLRepository");
+            rawPostalCodeSection = config.GetSection("SQLRepository").GetSection("RawPostalCode");
+        }
         #region Continent
 
-        public static readonly string GetContinentInfo = ConfigurationManager.AppSettings["GetContinentInfo"];
-        public static readonly string GetCountriesInAContinent = ConfigurationManager.AppSettings["GetCountriesInAContinent"];
-        public static readonly string UpdateContinents = ConfigurationManager.AppSettings["UpdateContinents"];
-        public static readonly string InsertContinents = ConfigurationManager.AppSettings["InsertContinents"];
-        public static readonly string DeleteContinent = ConfigurationManager.AppSettings["DeleteContinent"];
+        public string GetContinentInfo { get { return continentSection["GetContinentInfo"]; } }
+        public string GetCountriesInAContinent { get { return continentSection["GetCountriesInAContinent"]; } }
+        public string UpdateContinents { get { return continentSection["UpdateContinents"]; } }
+        public string InsertContinents { get { return continentSection["InsertContinents"]; } }
+        public string DeleteContinent { get { return continentSection["DeleteContinent"]; } }
 
         #endregion
 
         #region Country
 
-        public static readonly string GetCountryInfo = ConfigurationManager.AppSettings["GetCountryInfo"];
-        public static readonly string GetCountryFeatureCategoryFeatureCode = ConfigurationManager.AppSettings["GetCountryFeatureCategoryFeatureCode"];
-        public static readonly string UpdateCountries = ConfigurationManager.AppSettings["UpdateCountries"];
-        public static readonly string InsertCountries = ConfigurationManager.AppSettings["InsertCountries"];
-        public static readonly string DeleteCountry = ConfigurationManager.AppSettings["DeleteCountry"];
+        public string GetCountryInfo { get { return countrySection["GetCountryInfo"]; } }
+        public string GetCountryFeatureCategoryFeatureCode { get { return countrySection["GetCountryFeatureCategoryFeatureCode"]; } }
+        public string UpdateCountries { get { return countrySection["UpdateCountries"]; } }
+        public string InsertCountries { get { return countrySection["InsertCountries"]; } }
+        public string DeleteCountry { get { return countrySection["DeleteCountry"]; } }
 
         #endregion
 
         #region State
 
-        public static readonly string GetStateInfo = ConfigurationManager.AppSettings["GetStateInfo"];
-        public static readonly string GetCitiesInAState = ConfigurationManager.AppSettings["GetCitiesInAState"];
+        public string GetStateInfo { get { return stateSection["GetStateInfo"]; } }
+        public string GetCitiesInAState { get { return stateSection["GetCitiesInAState"]; } }
 
         #endregion
 
         #region TimeZone
 
-        public static readonly string GetTimeZoneDetails = ConfigurationManager.AppSettings["GetTimeZoneDetails"];
-        public static readonly string GetTimeZoneDetailsByPlaceName = ConfigurationManager.AppSettings["GetTimeZoneDetailsByPlaceName"];
-        public static readonly string GetDistinctTimeZones = ConfigurationManager.AppSettings["GetDistinctTimeZones"];
-        public static readonly string UpdateTimeZones = ConfigurationManager.AppSettings["UpdateTimeZones"];
-        public static readonly string InsertTimeZones = ConfigurationManager.AppSettings["InsertTimeZones"];
-        public static readonly string DeleteTimeZone = ConfigurationManager.AppSettings["DeleteTimeZone"];
+        public string GetTimeZoneDetails { get { return timezoneSection["GetTimeZoneDetails"]; } }
+        public string GetTimeZoneDetailsByPlaceName { get { return timezoneSection["GetTimeZoneDetailsByPlaceName"]; } }
+        public string GetDistinctTimeZones { get { return timezoneSection["GetDistinctTimeZones"]; } }
+        public string UpdateTimeZones { get { return timezoneSection["UpdateTimeZones"]; } }
+        public string InsertTimeZones { get { return timezoneSection["InsertTimeZones"]; } }
+        public string DeleteTimeZone { get { return timezoneSection["DeleteTimeZone"]; } }
 
         #endregion
 
         #region FeatureCategory
 
-        public static readonly string GetFeatureCategoryInfo = ConfigurationManager.AppSettings["GetFeatureCategoryInfo"];
-        public static readonly string UpdateFeatureCategories = ConfigurationManager.AppSettings["UpdateFeatureCategories"];
-        public static readonly string InsertFeatureCategories = ConfigurationManager.AppSettings["InsertFeatureCategories"];
-        public static readonly string DeleteFeatureCategory = ConfigurationManager.AppSettings["DeleteFeatureCategory"];
+        public string GetFeatureCategoryInfo { get { return featureCategorySection["GetFeatureCategoryInfo"]; } }
+        public string UpdateFeatureCategories { get { return featureCategorySection["UpdateFeatureCategories"]; } }
+        public string InsertFeatureCategories { get { return featureCategorySection["InsertFeatureCategories"]; } }
+        public string DeleteFeatureCategory { get { return featureCategorySection["DeleteFeatureCategory"]; } }
 
         #endregion
 
         #region FeatureCode
 
-        public static readonly string GetFeatureCodeInfo = ConfigurationManager.AppSettings["GetFeatureCodeInfo"];
-        public static readonly string UpdateFeatureCodes = ConfigurationManager.AppSettings["UpdateFeatureCodes"];
-        public static readonly string InsertFeatureCodes = ConfigurationManager.AppSettings["InsertFeatureCodes"];
-        public static readonly string DeleteFeatureCode = ConfigurationManager.AppSettings["DeleteFeatureCode"];
+        public string GetFeatureCodeInfo { get { return featureCodeSection["GetFeatureCodeInfo"]; } }
+        public string UpdateFeatureCodes { get { return featureCodeSection["UpdateFeatureCodes"]; } }
+        public string InsertFeatureCodes { get { return featureCodeSection["InsertFeatureCodes"]; } }
+        public string DeleteFeatureCode { get { return featureCodeSection["DeleteFeatureCode"]; } }
 
         #endregion
 
         #region LanguageSQLRepository
 
-        public static readonly string GetLanguageInfo = ConfigurationManager.AppSettings["GetLanguageInfo"];
-        public static readonly string UpdateLanguages = ConfigurationManager.AppSettings["UpdateLanguages"];
-        public static readonly string InsertLanguages = ConfigurationManager.AppSettings["InsertLanguages"];
-        public static readonly string DeleteLanuage = ConfigurationManager.AppSettings["DeleteLanguage"];
+        public string GetLanguageInfo { get { return languageSection["GetLanguageInfo"]; } }
+        public string UpdateLanguages { get { return languageSection["UpdateLanguages"]; } }
+        public string InsertLanguages { get { return languageSection["InsertLanguages"]; } }
+        public string DeleteLanuage { get { return languageSection["DeleteLanguage"]; } }
 
         #endregion
 
         #region RawPostalRepository
 
-        public static readonly string GetPostalCodeInfo = ConfigurationManager.AppSettings["GetPostalCodeInfo"];
-        public static readonly string UpdatePostalInfo = ConfigurationManager.AppSettings["UpdatePostalInfo"];
-        public static readonly string InsertPstalInfo = ConfigurationManager.AppSettings["InsertPostalInfo"];
-        public static readonly string DeletePostalInfo = ConfigurationManager.AppSettings["DeletePostalInfo"];
+        public string GetPostalCodeInfo { get { return rawPostalCodeSection["GetPostalCodeInfo"]; } }
+        public string UpdatePostalInfo { get { return rawPostalCodeSection["UpdatePostalInfo"]; } }
+        public string InsertPstalInfo { get { return rawPostalCodeSection["InsertPostalInfo"]; } }
+        public string DeletePostalInfo { get { return rawPostalCodeSection["DeletePostalInfo"]; } }
 
         #endregion
     }

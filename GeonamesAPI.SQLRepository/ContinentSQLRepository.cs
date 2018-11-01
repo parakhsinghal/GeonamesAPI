@@ -3,25 +3,29 @@ using GeonamesAPI.Domain;
 using GeonamesAPI.Domain.Interfaces;
 using GeonamesAPI.SQLRepository.Helper;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
 using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
 using System;
+using Microsoft.Extensions.Configuration;
+
 
 namespace GeonamesAPI.SQLRepository
 {
     public class ContinentSQLRepository : IContinentRepository
     {
-        public ContinentSQLRepository()
+        private readonly SQLRepositoryHelper sqlRepositoryHelper;
+
+        public ContinentSQLRepository(IConfiguration configuration)
         {
-            DBDataHelper.ConnectionString = ConfigurationManager.ConnectionStrings["Geonames"].ConnectionString;
+            DBDataHelper.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            sqlRepositoryHelper = new SQLRepositoryHelper(configuration);
         }
 
         public IEnumerable<Continent> GetContinentInfo(string continentCodeId = null, int? geonameId = null, string continentName = null)
         {
-            string sql = SQLRepositoryHelper.GetContinentInfo;
+            string sql = sqlRepositoryHelper.GetContinentInfo;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("ContinentCodeId", continentCodeId));
             parameterCollection.Add(new SqlParameter("GeonameId", geonameId));
@@ -39,17 +43,17 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result.Add(new Continent()
                             {
-                                ContinentCodeId = //dr.Field<string>("ContinentCodeId"),
-                                ContinentName = dr.Field<string>("Continent"),
-                                GeonameId = dr.Field<int>("GeonameId"),
-                                ASCIIName = dr.Field<string>("ASCIIName"),
-                                AlternateNames = dr.Field<string>("AlternateNames"),
-                                Latitude = dr.Field<double?>("Latitude"),
-                                Longitude = dr.Field<double?>("Longitude"),
-                                FeatureCategoryId = dr.Field<string>("FeatureCategoryId"),
-                                FeatureCodeId = dr.Field<string>("FeatureCodeId"),
-                                TimeZoneId = dr.Field<string>("TimeZoneId"),
-                                RowId = dr.Field<byte[]>("RowId")
+                                ContinentCodeId = dr["ContinentCodeId"].ToString(),
+                                ContinentName = dr["Continent"].ToString(),
+                                GeonameId = int.Parse(dr["GeonameId"].ToString()),
+                                ASCIIName = dr["ASCIIName"].ToString(),
+                                AlternateNames = dr["AlternateNames"].ToString(),
+                                Latitude = dr["Latitude"] == DBNull.Value ? 0f : double.Parse(dr["Latitude"].ToString()),
+                                Longitude = dr["Longitude"] == DBNull.Value ? 0f : double.Parse(dr["Longitude"].ToString()),
+                                FeatureCategoryId = dr["FeatureCategoryId"].ToString(),
+                                FeatureCodeId = dr["FeatureCodeId"].ToString(),
+                                TimeZoneId = dr["TimeZoneId"].ToString(),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             });
                         }
                     }
@@ -62,7 +66,7 @@ namespace GeonamesAPI.SQLRepository
         public IEnumerable<Country> GetCountriesInAContinent(string continentName = null, string continentCodeId = null, int? geonameId = null,
 int? pageNumber = null, int? pageSize = null)
         {
-            string sql = SQLRepositoryHelper.GetCountriesInAContinent;
+            string sql = sqlRepositoryHelper.GetCountriesInAContinent;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("ContinentName", continentName));
             parameterCollection.Add(new SqlParameter("ContinentCodeId", continentCodeId));
@@ -82,26 +86,26 @@ int? pageNumber = null, int? pageSize = null)
                         {
                             result.Add(new Country()
                             {
-                                ISOCountryCode = dr.Field<string>("ISOCountryCode"),
-                                ISO3Code = dr.Field<string>("ISO3Code"),
-                                ISONumeric = dr.Field<int?>("ISONumeric"),
-                                FIPSCode = dr.Field<string>("FIPSCode"),
-                                CountryName = dr.Field<string>("CountryName"),
-                                Capital = dr.Field<string>("Capital"),
-                                SqKmArea = dr.Field<double?>("SqKmArea"),
-                                TotalPopulation = dr.Field<long?>("TotalPopulation"),
-                                ContinentCodeId = dr.Field<string>("ContinentCodeId"),
-                                TopLevelDomain = dr.Field<string>("TopLevelDomain"),
-                                CurrencyCode = dr.Field<string>("CurrencyCode"),
-                                CurrencyName = dr.Field<string>("CurrencyName"),
-                                Phone = dr.Field<string>("Phone"),
-                                PostalFormat = dr.Field<string>("PostalFormat"),
-                                PostalRegex = dr.Field<string>("PostalRegex"),
-                                Languages = dr.Field<string>("Languages"),
-                                GeonameId = dr.Field<int?>("GeonameId"),
-                                Neighbors = dr.Field<string>("Neighbors"),
-                                EquivalentFipsCode = dr.Field<string>("EquivalentFipsCode"),
-                                RowId = dr.Field<byte[]>("RowId"),
+                                ISOCountryCode = dr["ISOCountryCode"].ToString(),
+                                ISO3Code = dr["ISO3Code"].ToString(),
+                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? 0 : int.Parse(dr["ISONumeric"].ToString()),
+                                FIPSCode = dr["FIPSCode"].ToString(),
+                                CountryName = dr["CountryName"].ToString(),
+                                Capital = dr["Capital"].ToString(),
+                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? 0f : double.Parse(dr["SqKmArea"].ToString()),
+                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? 0 : long.Parse(dr["TotalPopulation"].ToString()),
+                                ContinentCodeId = dr["ContinentCodeId"].ToString(),
+                                TopLevelDomain = dr["TopLevelDomain"].ToString(),
+                                CurrencyCode = dr["CurrencyCode"].ToString(),
+                                CurrencyName = dr["CurrencyName"].ToString(),
+                                Phone = dr["Phone"].ToString(),
+                                PostalFormat = dr["PostalFormat"].ToString(),
+                                PostalRegex = dr["PostalRegex"].ToString(),
+                                Languages = dr["Languages"].ToString(),
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Neighbors = dr["Neighbors"].ToString(),
+                                EquivalentFipsCode = dr["EquivalentFipsCode"].ToString(),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             });
                         }
                     }

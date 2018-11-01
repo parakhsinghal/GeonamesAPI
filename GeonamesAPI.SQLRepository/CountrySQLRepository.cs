@@ -4,24 +4,28 @@ using GeonamesAPI.Domain.Interfaces;
 using GeonamesAPI.SQLRepository.Helper;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
 using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
+using Microsoft.Extensions.Configuration;
 
 namespace GeonamesAPI.SQLRepository
 {
     public class CountrySQLRepository : ICountryRepository
     {
-        public CountrySQLRepository()
+        private readonly SQLRepositoryHelper sqlRepositoryHelper;
+
+        public CountrySQLRepository(IConfiguration configuration)
         {
-            DBDataHelper.ConnectionString = ConfigurationManager.ConnectionStrings["Geonames"].ConnectionString;
+            DBDataHelper.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            sqlRepositoryHelper = new SQLRepositoryHelper(configuration);
         }
+
 
         public IEnumerable<Country> GetAllCountries(int? pageSize = null, int? pageNumber = null)
         {
-            string sql = SQLRepositoryHelper.GetCountryInfo;
+            string sql = sqlRepositoryHelper.GetCountryInfo;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("PageNumber", pageNumber));
             parameterCollection.Add(new SqlParameter("PageSize", pageSize));
@@ -37,28 +41,28 @@ namespace GeonamesAPI.SQLRepository
                         foreach (DataRow dr in dt.Rows)
                         {
                             result.Add(new Country()
-                                {
-                                    ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
-                                    ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr.Field<string>("ISO3Code"),
-                                    ISONumeric = dr["ISONumeric"] == DBNull.Value ? null : dr.Field<int?>("ISONumeric"),
-                                    FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr.Field<string>("FIPSCode"),
-                                    CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr.Field<string>("CountryName"),
-                                    Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr.Field<string>("Capital"),
-                                    SqKmArea = dr["SqKmArea"] == DBNull.Value ? null : dr.Field<double?>("SqKmArea"),
-                                    TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? null : dr.Field<long?>("TotalPopulation"),
-                                    ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr.Field<string>("ContinentCodeId"),
-                                    TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr.Field<string>("TopLevelDomain"),
-                                    CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyCode"),
-                                    CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyName"),
-                                    Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr.Field<string>("Phone"),
-                                    PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalFormat"),
-                                    PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalRegex"),
-                                    Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr.Field<string>("Languages"),
-                                    GeonameId = dr["GeonameId"] == DBNull.Value ? null : dr.Field<int?>("GeonameId"),
-                                    Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr.Field<string>("Neighbors"),
-                                    EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr.Field<string>("EquivalentFipsCode"),
-                                    RowId = dr.Field<byte[]>("RowId"),
-                                });
+                            {
+                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr["ISO3Code"].ToString(),
+                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? 0 : int.Parse(dr["ISONumeric"].ToString()),
+                                FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr["FIPSCode"].ToString(),
+                                CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr["CountryName"].ToString(),
+                                Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr["Capital"].ToString(),
+                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? 0f : double.Parse(dr["SqKmArea"].ToString()),
+                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? 0 : long.Parse(dr["TotalPopulation"].ToString()),
+                                ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr["ContinentCodeId"].ToString(),
+                                TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr["TopLevelDomain"].ToString(),
+                                CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr["CurrencyCode"].ToString(),
+                                CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr["CurrencyName"].ToString(),
+                                Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr["Phone"].ToString(),
+                                PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr["PostalFormat"].ToString(),
+                                PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr["PostalRegex"].ToString(),
+                                Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr["Languages"].ToString(),
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr["Neighbors"].ToString(),
+                                EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr["EquivalentFipsCode"].ToString(),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                            });
                         }
                     }
                 }
@@ -69,7 +73,7 @@ namespace GeonamesAPI.SQLRepository
 
         public Country GetCountryInfo(string isoCountryCode = null, string countryName = null)
         {
-            string sql = SQLRepositoryHelper.GetCountryInfo;
+            string sql = sqlRepositoryHelper.GetCountryInfo;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
             parameterCollection.Add(new SqlParameter("CountryName", countryName));
@@ -86,26 +90,26 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result = new Country()
                             {
-                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr.Field<string>("ISOCountryCode"),
-                                ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr.Field<string>("ISO3Code"),
-                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? null : dr.Field<int?>("ISONumeric"),
-                                FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr.Field<string>("FIPSCode"),
-                                CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr.Field<string>("CountryName"),
-                                Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr.Field<string>("Capital"),
-                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? null : dr.Field<double?>("SqKmArea"),
-                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? null : dr.Field<long?>("TotalPopulation"),
-                                ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr.Field<string>("ContinentCodeId"),
-                                TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr.Field<string>("TopLevelDomain"),
-                                CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyCode"),
-                                CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyName"),
-                                Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr.Field<string>("Phone"),
-                                PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalFormat"),
-                                PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalRegex"),
-                                Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr.Field<string>("Languages"),
-                                GeonameId = dr["GeonameId"] == DBNull.Value ? null : dr.Field<int?>("GeonameId"),
-                                Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr.Field<string>("Neighbors"),
-                                EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr.Field<string>("EquivalentFipsCode"),
-                                RowId = dr.Field<byte[]>("RowId"),
+                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr["ISO3Code"].ToString(),
+                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? 0 : int.Parse(dr["ISONumeric"].ToString()),
+                                FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr["FIPSCode"].ToString(),
+                                CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr["CountryName"].ToString(),
+                                Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr["Capital"].ToString(),
+                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? 0f : double.Parse(dr["SqKmArea"].ToString()),
+                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? 0 : long.Parse(dr["TotalPopulation"].ToString()),
+                                ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr["ContinentCodeId"].ToString(),
+                                TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr["TopLevelDomain"].ToString(),
+                                CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr["CurrencyCode"].ToString(),
+                                CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr["CurrencyName"].ToString(),
+                                Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr["Phone"].ToString(),
+                                PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr["PostalFormat"].ToString(),
+                                PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr["PostalRegex"].ToString(),
+                                Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr["Languages"].ToString(),
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr["Neighbors"].ToString(),
+                                EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr["EquivalentFipsCode"].ToString(),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             };
                         }
                     }
@@ -117,7 +121,7 @@ namespace GeonamesAPI.SQLRepository
 
         public IEnumerable<RawData> GetCountryFeatureCategoryFeatureCode(string featureCategoryId, string isoCountryCode = null, string countryName = null, string featureCodeId = null, int? pageSize = null, int? pageNumber = null)
         {
-            string sql = SQLRepositoryHelper.GetCountryFeatureCategoryFeatureCode;
+            string sql = sqlRepositoryHelper.GetCountryFeatureCategoryFeatureCode;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
             parameterCollection.Add(new SqlParameter("CountryName", countryName));
@@ -137,23 +141,23 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result.Add(new RawData()
                             {
-                                GeonameId = dr["GeonameId"] != DBNull.Value ? dr.Field<int?>("GeonameId") : null,
-                                Name = dr["Name"] != DBNull.Value ? dr.Field<string>("Name") : string.Empty,
-                                ASCIIName = dr["ASCIIName"] != DBNull.Value ? dr.Field<string>("ASCIIName") : string.Empty,
-                                AlternateNames = dr["AlternateNames"] != DBNull.Value ? dr.Field<string>("AlternateNames") : string.Empty,
-                                Latitude = dr["Latitude"] != DBNull.Value ? dr.Field<double?>("Latitude") : null,
-                                Longitude = dr["Longitude"] != DBNull.Value ? dr.Field<double?>("Longitude") : null,
-                                FeatureCodeId = dr["FeatureCodeId"] != DBNull.Value ? dr.Field<string>("FeatureCodeId") : string.Empty,
-                                CC2 = dr["CC2"] != DBNull.Value ? dr.Field<string>("CC2") : string.Empty,
-                                Admin1Code = dr["Admin1Code"] != DBNull.Value ? dr.Field<string>("Admin1Code") : string.Empty,
-                                Admin2Code = dr["Admin2Code"] != DBNull.Value ? dr.Field<string>("Admin2Code") : string.Empty,
-                                Admin3Code = dr["Admin3Code"] != DBNull.Value ? dr.Field<string>("Admin3Code") : string.Empty,
-                                Admin4Code = dr["Admin4Code"] != DBNull.Value ? dr.Field<string>("Admin4Code") : string.Empty,
-                                Population = dr["Population"] != DBNull.Value ? dr.Field<long?>("Population") : null,
-                                Elevation = dr["Elevation"] != DBNull.Value ? dr.Field<int?>("Elevation") : null,
-                                DEM = dr["DEM"] != DBNull.Value ? dr.Field<int?>("DEM") : null,
-                                ModificationDate = dr["ModificationDate"] != DBNull.Value ? dr.Field<DateTime?>("ModificationDate") : null,
-                                RowId = dr.Field<byte[]>("RowId")
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Name = dr["Name"] == DBNull.Value ? string.Empty : dr["Name"].ToString(),
+                                ASCIIName = dr["ASCIIName"] == DBNull.Value ? string.Empty : dr["ASCIIName"].ToString(),
+                                AlternateNames = dr["AlternateNames"] == DBNull.Value ? string.Empty : dr["AlternateNames"].ToString(),
+                                Latitude = dr["Latitude"] == DBNull.Value ? 0f : double.Parse(dr["Latitude"].ToString()),
+                                Longitude = dr["Longitude"] == DBNull.Value ? 0f : double.Parse(dr["Longitude"].ToString()),
+                                FeatureCodeId = dr["FeatureCodeId"] == DBNull.Value ? string.Empty : dr["FeatureCodeId"].ToString(),
+                                CC2 = dr["CC2"] != DBNull.Value ? string.Empty : dr["CC2"].ToString(),
+                                Admin1Code = dr["Admin1Code"] == DBNull.Value ? string.Empty : dr["Admin1Code"].ToString(),
+                                Admin2Code = dr["Admin2Code"] == DBNull.Value ? string.Empty : dr["Admin2Code"].ToString(),
+                                Admin3Code = dr["Admin3Code"] == DBNull.Value ? string.Empty : dr["Admin3Code"].ToString(),
+                                Admin4Code = dr["Admin4Code"] == DBNull.Value ? string.Empty : dr["Admin4Code"].ToString(),
+                                Population = dr["Population"] == DBNull.Value ? 0 : long.Parse(dr["Population"].ToString()),
+                                Elevation = dr["Elevation"] == DBNull.Value ? 0 : int.Parse(dr["Elevation"].ToString()),
+                                DEM = dr["DEM"] == DBNull.Value ? 0 : int.Parse(dr["DEM"].ToString()),
+                                ModificationDate = dr["ModificationDate"] == DBNull.Value ? DateTime.MinValue : DateTime.Parse(dr["ModificationDate"].ToString()),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             });
                         }
                     }
@@ -165,7 +169,7 @@ namespace GeonamesAPI.SQLRepository
 
         public IEnumerable<RawData> GetStates(string countryName = null, string isoCountryCode = null, int? pageNumber = null, int? pageSize = null)
         {
-            string sql = SQLRepositoryHelper.GetStateInfo;
+            string sql = sqlRepositoryHelper.GetStateInfo;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("CountryName", countryName));
             parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
@@ -184,23 +188,23 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result.Add(new RawData()
                             {
-                                GeonameId = dr["GeonameId"] != DBNull.Value ? dr.Field<int?>("GeonameId") : null,
-                                Name = dr["Name"] != DBNull.Value ? dr.Field<string>("Name") : string.Empty,
-                                ASCIIName = dr["ASCIIName"] != DBNull.Value ? dr.Field<string>("ASCIIName") : string.Empty,
-                                AlternateNames = dr["AlternateNames"] != DBNull.Value ? dr.Field<string>("AlternateNames") : string.Empty,
-                                Latitude = dr["Latitude"] != DBNull.Value ? dr.Field<double?>("Latitude") : null,
-                                Longitude = dr["Longitude"] != DBNull.Value ? dr.Field<double?>("Longitude") : null,
-                                FeatureCodeId = dr["FeatureCodeId"] != DBNull.Value ? dr.Field<string>("FeatureCodeId") : string.Empty,
-                                CC2 = dr["CC2"] != DBNull.Value ? dr.Field<string>("CC2") : string.Empty,
-                                Admin1Code = dr["Admin1Code"] != DBNull.Value ? dr.Field<string>("Admin1Code") : string.Empty,
-                                Admin2Code = dr["Admin2Code"] != DBNull.Value ? dr.Field<string>("Admin2Code") : string.Empty,
-                                Admin3Code = dr["Admin3Code"] != DBNull.Value ? dr.Field<string>("Admin3Code") : string.Empty,
-                                Admin4Code = dr["Admin4Code"] != DBNull.Value ? dr.Field<string>("Admin4Code") : string.Empty,
-                                Population = dr["Population"] != DBNull.Value ? dr.Field<long?>("Population") : null,
-                                Elevation = dr["Elevation"] != DBNull.Value ? dr.Field<int?>("Elevation") : null,
-                                DEM = dr["DEM"] != DBNull.Value ? dr.Field<int?>("DEM") : null,
-                                ModificationDate = dr["ModificationDate"] != DBNull.Value ? dr.Field<DateTime?>("ModificationDate") : null,
-                                RowId = dr.Field<byte[]>("RowId")
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Name = dr["Name"] == DBNull.Value ? string.Empty : dr["Name"].ToString(),
+                                ASCIIName = dr["ASCIIName"] == DBNull.Value ? string.Empty : dr["ASCIIName"].ToString(),
+                                AlternateNames = dr["AlternateNames"] == DBNull.Value ? string.Empty : dr["AlternateNames"].ToString(),
+                                Latitude = dr["Latitude"] == DBNull.Value ? 0f : double.Parse(dr["Latitude"].ToString()),
+                                Longitude = dr["Longitude"] == DBNull.Value ? 0f : double.Parse(dr["Longitude"].ToString()),
+                                FeatureCodeId = dr["FeatureCodeId"] == DBNull.Value ? string.Empty : dr["FeatureCodeId"].ToString(),
+                                CC2 = dr["CC2"] != DBNull.Value ? string.Empty : dr["CC2"].ToString(),
+                                Admin1Code = dr["Admin1Code"] == DBNull.Value ? string.Empty : dr["Admin1Code"].ToString(),
+                                Admin2Code = dr["Admin2Code"] == DBNull.Value ? string.Empty : dr["Admin2Code"].ToString(),
+                                Admin3Code = dr["Admin3Code"] == DBNull.Value ? string.Empty : dr["Admin3Code"].ToString(),
+                                Admin4Code = dr["Admin4Code"] == DBNull.Value ? string.Empty : dr["Admin4Code"].ToString(),
+                                Population = dr["Population"] == DBNull.Value ? 0 : long.Parse(dr["Population"].ToString()),
+                                Elevation = dr["Elevation"] == DBNull.Value ? 0 : int.Parse(dr["Elevation"].ToString()),
+                                DEM = dr["DEM"] == DBNull.Value ? 0 : int.Parse(dr["DEM"].ToString()),
+                                ModificationDate = dr["ModificationDate"] == DBNull.Value ? DateTime.MinValue : DateTime.Parse(dr["ModificationDate"].ToString()),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             });
                         }
                     }
@@ -212,7 +216,7 @@ namespace GeonamesAPI.SQLRepository
 
         public RawData GetStateInfo(string countryName = null, string isoCountryCode = null, string stateName = null, int? stateGeonameId = null)
         {
-            string sql = SQLRepositoryHelper.GetStateInfo;
+            string sql = sqlRepositoryHelper.GetStateInfo;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("CountryName", countryName));
             parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
@@ -231,23 +235,23 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result = new RawData()
                             {
-                                GeonameId = dr["GeonameId"] != DBNull.Value ? dr.Field<int?>("GeonameId") : null,
-                                Name = dr["Name"] != DBNull.Value ? dr.Field<string>("Name") : string.Empty,
-                                ASCIIName = dr["ASCIIName"] != DBNull.Value ? dr.Field<string>("ASCIIName") : string.Empty,
-                                AlternateNames = dr["AlternateNames"] != DBNull.Value ? dr.Field<string>("AlternateNames") : string.Empty,
-                                Latitude = dr["Latitude"] != DBNull.Value ? dr.Field<double?>("Latitude") : null,
-                                Longitude = dr["Longitude"] != DBNull.Value ? dr.Field<double?>("Longitude") : null,
-                                FeatureCodeId = dr["FeatureCodeId"] != DBNull.Value ? dr.Field<string>("FeatureCodeId") : string.Empty,
-                                CC2 = dr["CC2"] != DBNull.Value ? dr.Field<string>("CC2") : string.Empty,
-                                Admin1Code = dr["Admin1Code"] != DBNull.Value ? dr.Field<string>("Admin1Code") : string.Empty,
-                                Admin2Code = dr["Admin2Code"] != DBNull.Value ? dr.Field<string>("Admin2Code") : string.Empty,
-                                Admin3Code = dr["Admin3Code"] != DBNull.Value ? dr.Field<string>("Admin3Code") : string.Empty,
-                                Admin4Code = dr["Admin4Code"] != DBNull.Value ? dr.Field<string>("Admin4Code") : string.Empty,
-                                Population = dr["Population"] != DBNull.Value ? dr.Field<long?>("Population") : null,
-                                Elevation = dr["Elevation"] != DBNull.Value ? dr.Field<int?>("Elevation") : null,
-                                DEM = dr["DEM"] != DBNull.Value ? dr.Field<int?>("DEM") : null,
-                                ModificationDate = dr["ModificationDate"] != DBNull.Value ? dr.Field<DateTime?>("ModificationDate") : null,
-                                RowId = dr.Field<byte[]>("RowId")
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Name = dr["Name"] == DBNull.Value ? string.Empty : dr["Name"].ToString(),
+                                ASCIIName = dr["ASCIIName"] == DBNull.Value ? string.Empty : dr["ASCIIName"].ToString(),
+                                AlternateNames = dr["AlternateNames"] == DBNull.Value ? string.Empty : dr["AlternateNames"].ToString(),
+                                Latitude = dr["Latitude"] == DBNull.Value ? 0f : double.Parse(dr["Latitude"].ToString()),
+                                Longitude = dr["Longitude"] == DBNull.Value ? 0f : double.Parse(dr["Longitude"].ToString()),
+                                FeatureCodeId = dr["FeatureCodeId"] == DBNull.Value ? string.Empty : dr["FeatureCodeId"].ToString(),
+                                CC2 = dr["CC2"] != DBNull.Value ? string.Empty : dr["CC2"].ToString(),
+                                Admin1Code = dr["Admin1Code"] == DBNull.Value ? string.Empty : dr["Admin1Code"].ToString(),
+                                Admin2Code = dr["Admin2Code"] == DBNull.Value ? string.Empty : dr["Admin2Code"].ToString(),
+                                Admin3Code = dr["Admin3Code"] == DBNull.Value ? string.Empty : dr["Admin3Code"].ToString(),
+                                Admin4Code = dr["Admin4Code"] == DBNull.Value ? string.Empty : dr["Admin4Code"].ToString(),
+                                Population = dr["Population"] == DBNull.Value ? 0 : long.Parse(dr["Population"].ToString()),
+                                Elevation = dr["Elevation"] == DBNull.Value ? 0 : int.Parse(dr["Elevation"].ToString()),
+                                DEM = dr["DEM"] == DBNull.Value ? 0 : int.Parse(dr["DEM"].ToString()),
+                                ModificationDate = dr["ModificationDate"] == DBNull.Value ? DateTime.MinValue : DateTime.Parse(dr["ModificationDate"].ToString()),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             };
                         }
                     }
@@ -259,7 +263,7 @@ namespace GeonamesAPI.SQLRepository
 
         public IEnumerable<RawData> GetCitiesInState(string countryName = null, string isoCountryCode = null, string stateName = null, int? stateGeonameId = null, int? cityGeonameId = null, string cityName = null, int? pageSize = null, int? pageNumber = null)
         {
-            string sql = SQLRepositoryHelper.GetCitiesInAState;
+            string sql = sqlRepositoryHelper.GetCitiesInAState;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("CountryName", countryName));
             parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
@@ -282,23 +286,23 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result.Add(new RawData()
                             {
-                                GeonameId = dr["GeonameId"] != DBNull.Value ? dr.Field<int?>("GeonameId") : null,
-                                Name = dr["Name"] != DBNull.Value ? dr.Field<string>("Name") : string.Empty,
-                                ASCIIName = dr["ASCIIName"] != DBNull.Value ? dr.Field<string>("ASCIIName") : string.Empty,
-                                AlternateNames = dr["AlternateNames"] != DBNull.Value ? dr.Field<string>("AlternateNames") : string.Empty,
-                                Latitude = dr["Latitude"] != DBNull.Value ? dr.Field<double?>("Latitude") : null,
-                                Longitude = dr["Longitude"] != DBNull.Value ? dr.Field<double?>("Longitude") : null,
-                                FeatureCodeId = dr["FeatureCodeId"] != DBNull.Value ? dr.Field<string>("FeatureCodeId") : string.Empty,
-                                CC2 = dr["CC2"] != DBNull.Value ? dr.Field<string>("CC2") : string.Empty,
-                                Admin1Code = dr["Admin1Code"] != DBNull.Value ? dr.Field<string>("Admin1Code") : string.Empty,
-                                Admin2Code = dr["Admin2Code"] != DBNull.Value ? dr.Field<string>("Admin2Code") : string.Empty,
-                                Admin3Code = dr["Admin3Code"] != DBNull.Value ? dr.Field<string>("Admin3Code") : string.Empty,
-                                Admin4Code = dr["Admin4Code"] != DBNull.Value ? dr.Field<string>("Admin4Code") : string.Empty,
-                                Population = dr["Population"] != DBNull.Value ? dr.Field<long?>("Population") : null,
-                                Elevation = dr["Elevation"] != DBNull.Value ? dr.Field<int?>("Elevation") : null,
-                                DEM = dr["DEM"] != DBNull.Value ? dr.Field<int?>("DEM") : null,
-                                ModificationDate = dr["ModificationDate"] != DBNull.Value ? dr.Field<DateTime?>("ModificationDate") : null,
-                                RowId = dr.Field<byte[]>("RowId")
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Name = dr["Name"] == DBNull.Value ? string.Empty : dr["Name"].ToString(),
+                                ASCIIName = dr["ASCIIName"] == DBNull.Value ? string.Empty : dr["ASCIIName"].ToString(),
+                                AlternateNames = dr["AlternateNames"] == DBNull.Value ? string.Empty : dr["AlternateNames"].ToString(),
+                                Latitude = dr["Latitude"] == DBNull.Value ? 0f : double.Parse(dr["Latitude"].ToString()),
+                                Longitude = dr["Longitude"] == DBNull.Value ? 0f : double.Parse(dr["Longitude"].ToString()),
+                                FeatureCodeId = dr["FeatureCodeId"] == DBNull.Value ? string.Empty : dr["FeatureCodeId"].ToString(),
+                                CC2 = dr["CC2"] != DBNull.Value ? string.Empty : dr["CC2"].ToString(),
+                                Admin1Code = dr["Admin1Code"] == DBNull.Value ? string.Empty : dr["Admin1Code"].ToString(),
+                                Admin2Code = dr["Admin2Code"] == DBNull.Value ? string.Empty : dr["Admin2Code"].ToString(),
+                                Admin3Code = dr["Admin3Code"] == DBNull.Value ? string.Empty : dr["Admin3Code"].ToString(),
+                                Admin4Code = dr["Admin4Code"] == DBNull.Value ? string.Empty : dr["Admin4Code"].ToString(),
+                                Population = dr["Population"] == DBNull.Value ? 0 : long.Parse(dr["Population"].ToString()),
+                                Elevation = dr["Elevation"] == DBNull.Value ? 0 : int.Parse(dr["Elevation"].ToString()),
+                                DEM = dr["DEM"] == DBNull.Value ? 0 : int.Parse(dr["DEM"].ToString()),
+                                ModificationDate = dr["ModificationDate"] == DBNull.Value ? DateTime.MinValue : DateTime.Parse(dr["ModificationDate"].ToString()),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             });
                         }
                     }
@@ -310,7 +314,7 @@ namespace GeonamesAPI.SQLRepository
 
         public RawData GetCityInState(string countryName = null, string isoCountryCode = null, string stateName = null, int? stateGeonameId = null, int? cityGeonameId = null, string cityName = null)
         {
-            string sql = SQLRepositoryHelper.GetCitiesInAState;
+            string sql = sqlRepositoryHelper.GetCitiesInAState;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
             parameterCollection.Add(new SqlParameter("CountryName", countryName));
             parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
@@ -327,25 +331,27 @@ namespace GeonamesAPI.SQLRepository
                 {
                     if (dt.Rows.Count > 0)
                     {
+                        DataRow dr = dt.Rows[0];
+
                         result = new RawData()
                         {
-                            GeonameId = dt.Rows[0]["GeonameId"] != DBNull.Value ? dt.Rows[0].Field<int?>("GeonameId") : null,
-                            Name = dt.Rows[0]["Name"] != DBNull.Value ? dt.Rows[0].Field<string>("Name") : string.Empty,
-                            ASCIIName = dt.Rows[0]["ASCIIName"] != DBNull.Value ? dt.Rows[0].Field<string>("ASCIIName") : string.Empty,
-                            AlternateNames = dt.Rows[0]["AlternateNames"] != DBNull.Value ? dt.Rows[0].Field<string>("AlternateNames") : string.Empty,
-                            Latitude = dt.Rows[0]["Latitude"] != DBNull.Value ? dt.Rows[0].Field<double?>("Latitude") : null,
-                            Longitude = dt.Rows[0]["Longitude"] != DBNull.Value ? dt.Rows[0].Field<double?>("Longitude") : null,
-                            FeatureCodeId = dt.Rows[0]["FeatureCodeId"] != DBNull.Value ? dt.Rows[0].Field<string>("FeatureCodeId") : string.Empty,
-                            CC2 = dt.Rows[0]["CC2"] != DBNull.Value ? dt.Rows[0].Field<string>("CC2") : string.Empty,
-                            Admin1Code = dt.Rows[0]["Admin1Code"] != DBNull.Value ? dt.Rows[0].Field<string>("Admin1Code") : string.Empty,
-                            Admin2Code = dt.Rows[0]["Admin2Code"] != DBNull.Value ? dt.Rows[0].Field<string>("Admin2Code") : string.Empty,
-                            Admin3Code = dt.Rows[0]["Admin3Code"] != DBNull.Value ? dt.Rows[0].Field<string>("Admin3Code") : string.Empty,
-                            Admin4Code = dt.Rows[0]["Admin4Code"] != DBNull.Value ? dt.Rows[0].Field<string>("Admin4Code") : string.Empty,
-                            Population = dt.Rows[0]["Population"] != DBNull.Value ? dt.Rows[0].Field<long?>("Population") : null,
-                            Elevation = dt.Rows[0]["Elevation"] != DBNull.Value ? dt.Rows[0].Field<int?>("Elevation") : null,
-                            DEM = dt.Rows[0]["DEM"] != DBNull.Value ? dt.Rows[0].Field<int?>("DEM") : null,
-                            ModificationDate = dt.Rows[0]["ModificationDate"] != DBNull.Value ? dt.Rows[0].Field<DateTime?>("ModificationDate") : null,
-                            RowId = dt.Rows[0].Field<byte[]>("RowId")
+                            GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                            Name = dr["Name"] == DBNull.Value ? string.Empty : dr["Name"].ToString(),
+                            ASCIIName = dr["ASCIIName"] == DBNull.Value ? string.Empty : dr["ASCIIName"].ToString(),
+                            AlternateNames = dr["AlternateNames"] == DBNull.Value ? string.Empty : dr["AlternateNames"].ToString(),
+                            Latitude = dr["Latitude"] == DBNull.Value ? 0f : double.Parse(dr["Latitude"].ToString()),
+                            Longitude = dr["Longitude"] == DBNull.Value ? 0f : double.Parse(dr["Longitude"].ToString()),
+                            FeatureCodeId = dr["FeatureCodeId"] == DBNull.Value ? string.Empty : dr["FeatureCodeId"].ToString(),
+                            CC2 = dr["CC2"] != DBNull.Value ? string.Empty : dr["CC2"].ToString(),
+                            Admin1Code = dr["Admin1Code"] == DBNull.Value ? string.Empty : dr["Admin1Code"].ToString(),
+                            Admin2Code = dr["Admin2Code"] == DBNull.Value ? string.Empty : dr["Admin2Code"].ToString(),
+                            Admin3Code = dr["Admin3Code"] == DBNull.Value ? string.Empty : dr["Admin3Code"].ToString(),
+                            Admin4Code = dr["Admin4Code"] == DBNull.Value ? string.Empty : dr["Admin4Code"].ToString(),
+                            Population = dr["Population"] == DBNull.Value ? 0 : long.Parse(dr["Population"].ToString()),
+                            Elevation = dr["Elevation"] == DBNull.Value ? 0 : int.Parse(dr["Elevation"].ToString()),
+                            DEM = dr["DEM"] == DBNull.Value ? 0 : int.Parse(dr["DEM"].ToString()),
+                            ModificationDate = dr["ModificationDate"] == DBNull.Value ? DateTime.MinValue : DateTime.Parse(dr["ModificationDate"].ToString()),
+                            RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                         };
                     }
                 }
@@ -356,7 +362,7 @@ namespace GeonamesAPI.SQLRepository
 
         public IEnumerable<Country> UpdateCountries(IEnumerable<Upd_VM.Country> countries)
         {
-            string sql = SQLRepositoryHelper.UpdateCountries;
+            string sql = sqlRepositoryHelper.UpdateCountries;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
 
             DataTable countriesInputTable = new DataTable("Country_TVP");
@@ -384,8 +390,8 @@ namespace GeonamesAPI.SQLRepository
             foreach (Upd_VM.Country country in countries)
             {
                 countriesInputTable.Rows.Add(new object[]
-                                { 
-                                    country.ISOCountryCode,                                    
+                                {
+                                    country.ISOCountryCode,
                                     country.ISONumeric,
                                     country.ISO3Code,
                                     country.FIPSCode,
@@ -424,26 +430,26 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result.Add(new Country()
                             {
-                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr.Field<string>("ISOCountryCode"),
-                                ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr.Field<string>("ISO3Code"),
-                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? null : dr.Field<int?>("ISONumeric"),
-                                FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr.Field<string>("FIPSCode"),
-                                CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr.Field<string>("CountryName"),
-                                Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr.Field<string>("Capital"),
-                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? null : dr.Field<double?>("SqKmArea"),
-                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? null : dr.Field<long?>("TotalPopulation"),
-                                ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr.Field<string>("ContinentCodeId"),
-                                TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr.Field<string>("TopLevelDomain"),
-                                CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyCode"),
-                                CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyName"),
-                                Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr.Field<string>("Phone"),
-                                PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalFormat"),
-                                PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalRegex"),
-                                Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr.Field<string>("Languages"),
-                                GeonameId = dr["GeonameId"] == DBNull.Value ? null : dr.Field<int?>("GeonameId"),
-                                Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr.Field<string>("Neighbors"),
-                                EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr.Field<string>("EquivalentFipsCode"),
-                                RowId = dr.Field<byte[]>("RowId"),
+                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr["ISO3Code"].ToString(),
+                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? 0 : int.Parse(dr["ISONumeric"].ToString()),
+                                FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr["FIPSCode"].ToString(),
+                                CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr["CountryName"].ToString(),
+                                Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr["Capital"].ToString(),
+                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? 0f : double.Parse(dr["SqKmArea"].ToString()),
+                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? 0 : long.Parse(dr["TotalPopulation"].ToString()),
+                                ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr["ContinentCodeId"].ToString(),
+                                TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr["TopLevelDomain"].ToString(),
+                                CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr["CurrencyCode"].ToString(),
+                                CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr["CurrencyName"].ToString(),
+                                Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr["Phone"].ToString(),
+                                PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr["PostalFormat"].ToString(),
+                                PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr["PostalRegex"].ToString(),
+                                Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr["Languages"].ToString(),
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr["Neighbors"].ToString(),
+                                EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr["EquivalentFipsCode"].ToString(),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             });
                         }
 
@@ -456,7 +462,7 @@ namespace GeonamesAPI.SQLRepository
 
         public IEnumerable<Country> InsertCountries(IEnumerable<Ins_VM.Country> countries)
         {
-            string sql = SQLRepositoryHelper.InsertCountries;
+            string sql = sqlRepositoryHelper.InsertCountries;
             List<SqlParameter> parameterCollection = new List<SqlParameter>();
 
             DataTable countriesInputTable = new DataTable("Country_TVP");
@@ -483,8 +489,8 @@ namespace GeonamesAPI.SQLRepository
             foreach (Ins_VM.Country country in countries)
             {
                 countriesInputTable.Rows.Add(new object[]
-                                { 
-                                    country.ISOCountryCode,                                    
+                                {
+                                    country.ISOCountryCode,
                                     country.ISONumeric,
                                     country.ISO3Code,
                                     country.FIPSCode,
@@ -522,26 +528,26 @@ namespace GeonamesAPI.SQLRepository
                         {
                             result.Add(new Country()
                             {
-                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr.Field<string>("ISOCountryCode"),
-                                ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr.Field<string>("ISO3Code"),
-                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? null : dr.Field<int?>("ISONumeric"),
-                                FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr.Field<string>("FIPSCode"),
-                                CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr.Field<string>("CountryName"),
-                                Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr.Field<string>("Capital"),
-                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? null : dr.Field<double?>("SqKmArea"),
-                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? null : dr.Field<long?>("TotalPopulation"),
-                                ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr.Field<string>("ContinentCodeId"),
-                                TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr.Field<string>("TopLevelDomain"),
-                                CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyCode"),
-                                CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr.Field<string>("CurrencyName"),
-                                Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr.Field<string>("Phone"),
-                                PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalFormat"),
-                                PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr.Field<string>("PostalRegex"),
-                                Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr.Field<string>("Languages"),
-                                GeonameId = dr["GeonameId"] == DBNull.Value ? null : dr.Field<int?>("GeonameId"),
-                                Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr.Field<string>("Neighbors"),
-                                EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr.Field<string>("EquivalentFipsCode"),
-                                RowId = dr.Field<byte[]>("RowId"),
+                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                ISO3Code = dr["ISO3Code"] == DBNull.Value ? string.Empty : dr["ISO3Code"].ToString(),
+                                ISONumeric = dr["ISONumeric"] == DBNull.Value ? 0 : int.Parse(dr["ISONumeric"].ToString()),
+                                FIPSCode = dr["FIPSCode"] == DBNull.Value ? string.Empty : dr["FIPSCode"].ToString(),
+                                CountryName = dr["CountryName"] == DBNull.Value ? string.Empty : dr["CountryName"].ToString(),
+                                Capital = dr["Capital"] == DBNull.Value ? string.Empty : dr["Capital"].ToString(),
+                                SqKmArea = dr["SqKmArea"] == DBNull.Value ? 0f : double.Parse(dr["SqKmArea"].ToString()),
+                                TotalPopulation = dr["TotalPopulation"] == DBNull.Value ? 0 : long.Parse(dr["TotalPopulation"].ToString()),
+                                ContinentCodeId = dr["ContinentCodeId"] == DBNull.Value ? string.Empty : dr["ContinentCodeId"].ToString(),
+                                TopLevelDomain = dr["TopLevelDomain"] == DBNull.Value ? string.Empty : dr["TopLevelDomain"].ToString(),
+                                CurrencyCode = dr["CurrencyCode"] == DBNull.Value ? string.Empty : dr["CurrencyCode"].ToString(),
+                                CurrencyName = dr["CurrencyName"] == DBNull.Value ? string.Empty : dr["CurrencyName"].ToString(),
+                                Phone = dr["Phone"] == DBNull.Value ? string.Empty : dr["Phone"].ToString(),
+                                PostalFormat = dr["PostalFormat"] == DBNull.Value ? string.Empty : dr["PostalFormat"].ToString(),
+                                PostalRegex = dr["PostalRegex"] == DBNull.Value ? string.Empty : dr["PostalRegex"].ToString(),
+                                Languages = dr["Languages"] == DBNull.Value ? string.Empty : dr["Languages"].ToString(),
+                                GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
+                                Neighbors = dr["Neighbors"] == DBNull.Value ? string.Empty : dr["Neighbors"].ToString(),
+                                EquivalentFipsCode = dr["EquivalentFipsCode"] == DBNull.Value ? string.Empty : dr["EquivalentFipsCode"].ToString(),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
                             });
                         }
 

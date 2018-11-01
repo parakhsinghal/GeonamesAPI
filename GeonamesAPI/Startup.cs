@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using GeonamesAPI.Domain.Interfaces;
+using GeonamesAPI.SQLRepository;
 
 namespace GeonamesAPI
 {
@@ -18,6 +20,10 @@ namespace GeonamesAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddSingleton<IContinentRepository, ContinentSQLRepository>();
+            //services.AddSingleton<ICountryRepository, CountrySQLRepository>();
+            //services.AddSingleton<IFeatureCategoryRepository, FeatureCategorySQLRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
