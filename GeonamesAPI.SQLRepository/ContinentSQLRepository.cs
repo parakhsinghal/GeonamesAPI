@@ -15,12 +15,12 @@ namespace GeonamesAPI.SQLRepository
 {
     public class ContinentSQLRepository : IContinentRepository
     {
-        private readonly SQLRepositoryHelper sqlRepositoryHelper;
+        private readonly sqlRepositoryHelper sqlRepositoryHelper;
 
         public ContinentSQLRepository(IConfiguration configuration)
         {
             DBDataHelper.ConnectionString = configuration.GetConnectionString("DefaultConnection");
-            sqlRepositoryHelper = new SQLRepositoryHelper(configuration);
+            sqlRepositoryHelper = new sqlRepositoryHelper(configuration);
         }
 
         public IEnumerable<Continent> GetContinentInfo(string continentCodeId = null, int? geonameId = null, string continentName = null)

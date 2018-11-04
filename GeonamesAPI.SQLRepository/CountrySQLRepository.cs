@@ -14,12 +14,12 @@ namespace GeonamesAPI.SQLRepository
 {
     public class CountrySQLRepository : ICountryRepository
     {
-        private readonly SQLRepositoryHelper sqlRepositoryHelper;
+        private readonly sqlRepositoryHelper sqlRepositoryHelper;
 
         public CountrySQLRepository(IConfiguration configuration)
         {
             DBDataHelper.ConnectionString = configuration.GetConnectionString("DefaultConnection");
-            sqlRepositoryHelper = new SQLRepositoryHelper(configuration);
+            sqlRepositoryHelper = new sqlRepositoryHelper(configuration);
         }
 
 

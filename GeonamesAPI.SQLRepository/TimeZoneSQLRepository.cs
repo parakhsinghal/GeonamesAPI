@@ -1,269 +1,272 @@
-﻿//using GeonamesAPI.DALHelper;
-//using GeonamesAPI.Domain.Interfaces;
-//using GeonamesAPI.SQLRepository.Helper;
-//using System;
-//using System.Collections.Generic;
-//using System.Configuration;
-//using System.Data;
-//using System.Data.SqlClient;
-//using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
-//using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
+﻿using GeonamesAPI.DALHelper;
+using GeonamesAPI.Domain.Interfaces;
+using GeonamesAPI.SQLRepository.Helper;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
+using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
+using Microsoft.Extensions.Configuration;
 
-//namespace GeonamesAPI.SQLRepository
-//{
-//    public class TimeZoneSQLRepository : ITimeZoneRepository
-//    {
-//        public TimeZoneSQLRepository()
-//        {
-//            DBDataHelper.ConnectionString = ConfigurationManager.ConnectionStrings["Geonames"].ConnectionString;
-//        }
+namespace GeonamesAPI.SQLRepository
+{
+    public class TimeZoneSQLRepository : ITimeZoneRepository
+    {
+        private readonly sqlRepositoryHelper sqlRepositoryHelper;
 
-//        public IEnumerable<string> GetDistinctTimeZones()
-//        {
-//            try
-//            {
-//                string sql = SQLRepositoryHelper.GetDistinctTimeZones;
-//                List<string> result = new List<string>();
+        public TimeZoneSQLRepository(IConfiguration configuration)
+        {
+            DBDataHelper.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            sqlRepositoryHelper = new sqlRepositoryHelper(configuration);
+        }
 
-//                using (DBDataHelper helper = new DBDataHelper())
-//                {
-//                    using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection: null))
-//                    {
-//                        if (dt.Rows.Count > 0)
-//                        {
-//                            foreach (DataRow dr in dt.Rows)
-//                            {
-//                                result.Add(dr.Field<string>("TimeZoneId"));
-//                            }
-//                        }
-//                    }
-//                }
+        public IEnumerable<string> GetDistinctTimeZones()
+        {
+            try
+            {
+                string sql = sqlRepositoryHelper.GetDistinctTimeZones;
+                List<string> result = new List<string>();
 
-//                return result;
-//            }
-//            catch (Exception)
-//            {
-//                throw;
-//            }
+                using (DBDataHelper helper = new DBDataHelper())
+                {
+                    using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection: null))
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                result.Add(dr["TimeZoneId"].ToString());
+                            }
+                        }
+                    }
+                }
 
-//        }
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-//        public IEnumerable<Domain.TimeZone> GetTimeZoneDetails(string timeZoneId = null, string isoCountryCode = null, string iso3Code = null, int? isoNumeric = null, string countryName = null, double? latitude = null, double? longitude = null, int? pageNumber = null, int? pageSize = null)
-//        {
-//            try
-//            {
-//                string sql = SQLRepositoryHelper.GetTimeZoneDetails;
-//                List<SqlParameter> parameterCollection = new List<SqlParameter>();
-//                parameterCollection.Add(new SqlParameter("TimeZoneId", timeZoneId));
-//                parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
-//                parameterCollection.Add(new SqlParameter("ISO3Code", iso3Code));
-//                parameterCollection.Add(new SqlParameter("ISONumeric", isoNumeric));
-//                parameterCollection.Add(new SqlParameter("CountryName", countryName));
-//                parameterCollection.Add(new SqlParameter("Latitude", latitude));
-//                parameterCollection.Add(new SqlParameter("Longitude", longitude));
-//                parameterCollection.Add(new SqlParameter("PageNumber", pageNumber));
-//                parameterCollection.Add(new SqlParameter("PageSize", pageSize));
+        }
 
-//                List<Domain.TimeZone> result = new List<Domain.TimeZone>();
-//                using (DBDataHelper helper = new DBDataHelper())
-//                {
-//                    using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
-//                    {
-//                        if (dt.Rows.Count > 0)
-//                        {
-//                            foreach (DataRow dr in dt.Rows)
-//                            {
-//                                result.Add(new Domain.TimeZone()
-//                                {
-//                                    TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr.Field<string>("TimeZoneId"),
-//                                    ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr.Field<string>("ISOCountryCode"),
-//                                    GMT = dr["GMT"] == DBNull.Value ? null : dr.Field<decimal?>("GMT"),
-//                                    DST = dr["DST"] == DBNull.Value ? null : dr.Field<decimal?>("DST"),
-//                                    RawOffset = dr["RawOffset"] == DBNull.Value ? null : dr.Field<decimal?>("RawOffset"),
-//                                    RowId = dr.Field<byte[]>("RowId")
-//                                });
-//                            }
-//                        }
-//                    }
-//                }
+        public IEnumerable<Domain.TimeZone> GetTimeZoneDetails(string timeZoneId = null, string isoCountryCode = null, string iso3Code = null, int? isoNumeric = null, string countryName = null, double? latitude = null, double? longitude = null, int? pageNumber = null, int? pageSize = null)
+        {
+            try
+            {
+                string sql = sqlRepositoryHelper.GetTimeZoneDetails;
+                List<SqlParameter> parameterCollection = new List<SqlParameter>();
+                parameterCollection.Add(new SqlParameter("TimeZoneId", timeZoneId));
+                parameterCollection.Add(new SqlParameter("ISOCountryCode", isoCountryCode));
+                parameterCollection.Add(new SqlParameter("ISO3Code", iso3Code));
+                parameterCollection.Add(new SqlParameter("ISONumeric", isoNumeric));
+                parameterCollection.Add(new SqlParameter("CountryName", countryName));
+                parameterCollection.Add(new SqlParameter("Latitude", latitude));
+                parameterCollection.Add(new SqlParameter("Longitude", longitude));
+                parameterCollection.Add(new SqlParameter("PageNumber", pageNumber));
+                parameterCollection.Add(new SqlParameter("PageSize", pageSize));
 
-//                return result;
-//            }
-//            catch (Exception)
-//            {
-//                throw;
-//            }
+                List<Domain.TimeZone> result = new List<Domain.TimeZone>();
+                using (DBDataHelper helper = new DBDataHelper())
+                {
+                    using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                result.Add(new Domain.TimeZone()
+                                {
+                                    TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr["TimeZoneId"].ToString(),
+                                    ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                    GMT = dr["GMT"] == DBNull.Value ? 0 : decimal.Parse(dr["GMT"].ToString()),
+                                    DST = dr["DST"] == DBNull.Value ? 0 : decimal.Parse(dr["DST"].ToString()),
+                                    RawOffset = dr["RawOffset"] == DBNull.Value ? 0 : decimal.Parse(dr["RawOffset"].ToString()),
+                                    RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                                });
+                            }
+                        }
+                    }
+                }
 
-//        }
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
-//        public IEnumerable<Domain.TimeZone> GetTimeZoneDetailsByPlaceName(string placeName)
-//        {
+        }
 
-//            try
-//            {
-//                string sql = SQLRepositoryHelper.GetTimeZoneDetailsByPlaceName;
-//                List<SqlParameter> parameterCollection = new List<SqlParameter>();
-//                parameterCollection.Add(new SqlParameter("PlaceName", placeName));
+        public IEnumerable<Domain.TimeZone> GetTimeZoneDetailsByPlaceName(string placeName)
+        {
 
-//                List<Domain.TimeZone> result = new List<Domain.TimeZone>();
-//                using (DBDataHelper helper = new DBDataHelper())
-//                {
-//                    using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
-//                    {
-//                        if (dt.Rows.Count > 0)
-//                        {
-//                            foreach (DataRow dr in dt.Rows)
-//                            {
-//                                result.Add(new Domain.TimeZone()
-//                                {
-//                                    TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr.Field<string>("TimeZoneId"),
-//                                    ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr.Field<string>("ISOCountryCode"),
-//                                    GMT = dr["GMT"] == DBNull.Value ? null : dr.Field<decimal?>("GMT"),
-//                                    DST = dr["DST"] == DBNull.Value ? null : dr.Field<decimal?>("DST"),
-//                                    RawOffset = dr["RawOffset"] == DBNull.Value ? null : dr.Field<decimal?>("RawOffset"),
-//                                    RowId = dr.Field<byte[]>("RowId")
-//                                });
-//                            }
-//                        }
-//                    }
-//                }
+            try
+            {
+                string sql = sqlRepositoryHelper.GetTimeZoneDetailsByPlaceName;
+                List<SqlParameter> parameterCollection = new List<SqlParameter>();
+                parameterCollection.Add(new SqlParameter("PlaceName", placeName));
 
-//                return result;
-//            }
-//            catch (Exception ex)
-//            {
-//                throw;
-//            }
-//        }
+                List<Domain.TimeZone> result = new List<Domain.TimeZone>();
+                using (DBDataHelper helper = new DBDataHelper())
+                {
+                    using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
+                    {
+                        if (dt.Rows.Count > 0)
+                        {
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                result.Add(new Domain.TimeZone()
+                                {
+                                    TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr["TimeZoneId"].ToString(),
+                                    ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                    GMT = dr["GMT"] == DBNull.Value ? 0 : decimal.Parse(dr["GMT"].ToString()),
+                                    DST = dr["DST"] == DBNull.Value ? 0 : decimal.Parse(dr["DST"].ToString()),
+                                    RawOffset = dr["RawOffset"] == DBNull.Value ? 0 : decimal.Parse(dr["RawOffset"].ToString()),
+                                    RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                                });
+                            }
+                        }
+                    }
+                }
 
-//        public IEnumerable<GeonamesAPI.Domain.TimeZone> UpdateTimeZones(IEnumerable<Upd_VM.TimeZone> timeZones)
-//        {
-//            string sql = SQLRepositoryHelper.UpdateTimeZones;
-//            List<SqlParameter> parameterCollection = new List<SqlParameter>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
-//            DataTable timeZonesInputTable = new DataTable("TimeZone_TVP");
-//            timeZonesInputTable.Columns.Add("ISOCountryCode");
-//            timeZonesInputTable.Columns.Add("TimeZoneId");
-//            timeZonesInputTable.Columns.Add("GMT");
-//            timeZonesInputTable.Columns.Add("DST");
-//            timeZonesInputTable.Columns.Add("RawOffset");
-//            timeZonesInputTable.Columns.Add("RowId", typeof(byte[]));
+        public IEnumerable<GeonamesAPI.Domain.TimeZone> UpdateTimeZones(IEnumerable<Upd_VM.TimeZone> timeZones)
+        {
+            string sql = sqlRepositoryHelper.UpdateTimeZones;
+            List<SqlParameter> parameterCollection = new List<SqlParameter>();
 
-//            foreach (Upd_VM.TimeZone timeZone in timeZones)
-//            {
-//                timeZonesInputTable.Rows.Add(new object[]
-//                                { 
-//                                   timeZone.ISOCountryCode,
-//                                   timeZone.TimeZoneId,
-//                                   timeZone.GMT,
-//                                   timeZone.DST,
-//                                   timeZone.RawOffset,
-//                                   timeZone.RowId
-//                                });
-//            }
+            DataTable timeZonesInputTable = new DataTable("TimeZone_TVP");
+            timeZonesInputTable.Columns.Add("ISOCountryCode");
+            timeZonesInputTable.Columns.Add("TimeZoneId");
+            timeZonesInputTable.Columns.Add("GMT");
+            timeZonesInputTable.Columns.Add("DST");
+            timeZonesInputTable.Columns.Add("RawOffset");
+            timeZonesInputTable.Columns.Add("RowId", typeof(byte[]));
 
-//            SqlParameter inputData = new SqlParameter("Input", timeZonesInputTable);
-//            inputData.SqlDbType = SqlDbType.Structured;
-//            parameterCollection.Add(inputData);
+            foreach (Upd_VM.TimeZone timeZone in timeZones)
+            {
+                timeZonesInputTable.Rows.Add(new object[]
+                                {
+                                   timeZone.ISOCountryCode,
+                                   timeZone.TimeZoneId,
+                                   timeZone.GMT,
+                                   timeZone.DST,
+                                   timeZone.RawOffset,
+                                   timeZone.RowId
+                                });
+            }
 
-//            List<Domain.TimeZone> result = new List<Domain.TimeZone>();
+            SqlParameter inputData = new SqlParameter("Input", timeZonesInputTable);
+            inputData.SqlDbType = SqlDbType.Structured;
+            parameterCollection.Add(inputData);
 
-//            using (DBDataHelper helper = new DBDataHelper())
-//            {
-//                using (DataTable timeZonesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
-//                {
-//                    if (timeZonesOutputTable.Rows.Count > 0)
-//                    {
-//                        foreach (DataRow dr in timeZonesOutputTable.Rows)
-//                        {
-//                            result.Add(new Domain.TimeZone()
-//                            {
-//                                TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr.Field<string>("TimeZoneId"),
-//                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr.Field<string>("ISOCountryCode"),
-//                                GMT = dr["GMT"] == DBNull.Value ? null : dr.Field<decimal?>("GMT"),
-//                                DST = dr["DST"] == DBNull.Value ? null : dr.Field<decimal?>("DST"),
-//                                RawOffset = dr["RawOffset"] == DBNull.Value ? null : dr.Field<decimal?>("RawOffset"),
-//                                RowId = dr.Field<byte[]>("RowId")
-//                            });
-//                        }
+            List<Domain.TimeZone> result = new List<Domain.TimeZone>();
 
-//                    }
-//                }
-//            }
+            using (DBDataHelper helper = new DBDataHelper())
+            {
+                using (DataTable timeZonesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
+                {
+                    if (timeZonesOutputTable.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in timeZonesOutputTable.Rows)
+                        {
+                            result.Add(new Domain.TimeZone()
+                            {
+                                TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr["TimeZoneId"].ToString(),
+                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                GMT = dr["GMT"] == DBNull.Value ? 0 : decimal.Parse(dr["GMT"].ToString()),
+                                DST = dr["DST"] == DBNull.Value ? 0 : decimal.Parse(dr["DST"].ToString()),
+                                RawOffset = dr["RawOffset"] == DBNull.Value ? 0 : decimal.Parse(dr["RawOffset"].ToString()),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                            });
+                        }
 
-//            return result;
-//        }
+                    }
+                }
+            }
 
-//        public IEnumerable<GeonamesAPI.Domain.TimeZone> InsertTimeZones(IEnumerable<Ins_VM.TimeZone> timeZones)
-//        {
-//            string sql = SQLRepositoryHelper.InsertTimeZones;
-//            List<SqlParameter> parameterCollection = new List<SqlParameter>();
+            return result;
+        }
 
-//            DataTable timeZonesInputTable = new DataTable("TimeZone_TVP");
-//            timeZonesInputTable.Columns.Add("ISOCountryCode");
-//            timeZonesInputTable.Columns.Add("TimeZoneId");
-//            timeZonesInputTable.Columns.Add("GMT");
-//            timeZonesInputTable.Columns.Add("DST");
-//            timeZonesInputTable.Columns.Add("RawOffset");
+        public IEnumerable<GeonamesAPI.Domain.TimeZone> InsertTimeZones(IEnumerable<Ins_VM.TimeZone> timeZones)
+        {
+            string sql = sqlRepositoryHelper.InsertTimeZones;
+            List<SqlParameter> parameterCollection = new List<SqlParameter>();
 
-//            foreach (Ins_VM.TimeZone timeZone in timeZones)
-//            {
-//                timeZonesInputTable.Rows.Add(new object[]
-//                                { 
-//                                   timeZone.ISOCountryCode,
-//                                   timeZone.TimeZoneId,
-//                                   timeZone.GMT,
-//                                   timeZone.DST,
-//                                   timeZone.RawOffset
-//                                });
-//            }
+            DataTable timeZonesInputTable = new DataTable("TimeZone_TVP");
+            timeZonesInputTable.Columns.Add("ISOCountryCode");
+            timeZonesInputTable.Columns.Add("TimeZoneId");
+            timeZonesInputTable.Columns.Add("GMT");
+            timeZonesInputTable.Columns.Add("DST");
+            timeZonesInputTable.Columns.Add("RawOffset");
 
-//            SqlParameter inputData = new SqlParameter("Input", timeZonesInputTable);
-//            inputData.SqlDbType = SqlDbType.Structured;
-//            parameterCollection.Add(inputData);
+            foreach (Ins_VM.TimeZone timeZone in timeZones)
+            {
+                timeZonesInputTable.Rows.Add(new object[]
+                                {
+                                   timeZone.ISOCountryCode,
+                                   timeZone.TimeZoneId,
+                                   timeZone.GMT,
+                                   timeZone.DST,
+                                   timeZone.RawOffset
+                                });
+            }
 
-//            List<Domain.TimeZone> result = new List<Domain.TimeZone>();
+            SqlParameter inputData = new SqlParameter("Input", timeZonesInputTable);
+            inputData.SqlDbType = SqlDbType.Structured;
+            parameterCollection.Add(inputData);
 
-//            using (DBDataHelper helper = new DBDataHelper())
-//            {
-//                using (DataTable timeZonesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
-//                {
-//                    if (timeZonesOutputTable.Rows.Count > 0)
-//                    {
-//                        foreach (DataRow dr in timeZonesOutputTable.Rows)
-//                        {
-//                            result.Add(new Domain.TimeZone()
-//                            {
-//                                TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr.Field<string>("TimeZoneId"),
-//                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr.Field<string>("ISOCountryCode"),
-//                                GMT = dr["GMT"] == DBNull.Value ? null : dr.Field<decimal?>("GMT"),
-//                                DST = dr["DST"] == DBNull.Value ? null : dr.Field<decimal?>("DST"),
-//                                RawOffset = dr["RawOffset"] == DBNull.Value ? null : dr.Field<decimal?>("RawOffset"),
-//                                RowId = dr.Field<byte[]>("RowId")
-//                            });
-//                        }
+            List<Domain.TimeZone> result = new List<Domain.TimeZone>();
 
-//                    }
-//                }
-//            }
+            using (DBDataHelper helper = new DBDataHelper())
+            {
+                using (DataTable timeZonesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
+                {
+                    if (timeZonesOutputTable.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in timeZonesOutputTable.Rows)
+                        {
+                            result.Add(new Domain.TimeZone()
+                            {
+                                TimeZoneId = dr["TimeZoneId"] == DBNull.Value ? string.Empty : dr["TimeZoneId"].ToString(),
+                                ISOCountryCode = dr["ISOCountryCode"] == DBNull.Value ? string.Empty : dr["ISOCountryCode"].ToString(),
+                                GMT = dr["GMT"] == DBNull.Value ? 0 : decimal.Parse(dr["GMT"].ToString()),
+                                DST = dr["DST"] == DBNull.Value ? 0 : decimal.Parse(dr["DST"].ToString()),
+                                RawOffset = dr["RawOffset"] == DBNull.Value ? 0 : decimal.Parse(dr["RawOffset"].ToString()),
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                            });
+                        }
 
-//            return result;
-//        }
+                    }
+                }
+            }
 
-//        public int DeleteTimeZone(string timeZoneId)
-//        {
-//            string sql = SQLRepositoryHelper.DeleteTimeZone;
-//            List<SqlParameter> parameterCollection = new List<SqlParameter>();
-//            parameterCollection.Add(new SqlParameter("Input", timeZoneId));
+            return result;
+        }
 
-//            int result = 0;
+        public int DeleteTimeZone(string timeZoneId)
+        {
+            string sql = sqlRepositoryHelper.DeleteTimeZone;
+            List<SqlParameter> parameterCollection = new List<SqlParameter>();
+            parameterCollection.Add(new SqlParameter("Input", timeZoneId));
 
-//            using (DBDataHelper helper = new DBDataHelper())
-//            {
-//                result = helper.GetRowsAffected(sql, SQLTextType.Stored_Proc, parameterCollection);
-//            }
+            int result = 0;
 
-//            return result;
-//        }
-//    }
-//}
+            using (DBDataHelper helper = new DBDataHelper())
+            {
+                result = helper.GetRowsAffected(sql, SQLTextType.Stored_Proc, parameterCollection);
+            }
+
+            return result;
+        }
+    }
+}

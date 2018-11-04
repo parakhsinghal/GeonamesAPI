@@ -2,11 +2,11 @@
 
 namespace GeonamesAPI.SQLRepository.Helper
 {
-    internal class SQLRepositoryHelper
+    internal class sqlRepositoryHelper
     {
         private readonly IConfiguration continentSection, countrySection, languageSection, featureCategorySection, featureCodeSection, timezoneSection, stateSection, rawPostalCodeSection;
 
-        public SQLRepositoryHelper(IConfiguration config)
+        public sqlRepositoryHelper(IConfiguration config)
         {
             continentSection = config.GetSection("SQLRepository").GetSection("ContinentSQLRepository");
             countrySection = config.GetSection("SQLRepository").GetSection("CountrySQLRepository");

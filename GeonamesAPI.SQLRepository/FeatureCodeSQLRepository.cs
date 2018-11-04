@@ -1,173 +1,175 @@
-﻿//using GeonamesAPI.DALHelper;
-//using GeonamesAPI.Domain;
-//using GeonamesAPI.Domain.Interfaces;
-//using GeonamesAPI.SQLRepository.Helper;
-//using System.Collections.Generic;
-//using System.Configuration;
-//using System.Data;
-//using System.Data.SqlClient;
-//using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
-//using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
-//using System;
+﻿using GeonamesAPI.DALHelper;
+using GeonamesAPI.Domain;
+using GeonamesAPI.Domain.Interfaces;
+using GeonamesAPI.SQLRepository.Helper;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
+using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
+using Microsoft.Extensions.Configuration;
 
-//namespace GeonamesAPI.SQLRepository
-//{
-//    public class FeatureCodeSQLRepository : IFeatureCode
-//    {
-//        public FeatureCodeSQLRepository()
-//        {
-//            DBDataHelper.ConnectionString = ConfigurationManager.ConnectionStrings["Geonames"].ConnectionString;
-//        }
+namespace GeonamesAPI.SQLRepository
+{
+    public class FeatureCodeSQLRepository : IFeatureCode
+    {
+        private readonly sqlRepositoryHelper sqlRepositoryHelper;
 
-//        public IEnumerable<FeatureCode> GetFeatureCodes(string featureCodeId, int? pageNumber, int? pageSize)
-//        {
-//            string sql = SQLRepositoryHelper.GetFeatureCodeInfo;
-//            List<SqlParameter> parameterCollection = new List<SqlParameter>();
-//            parameterCollection.Add(new SqlParameter("FeatureCodeId", featureCodeId));
-//            parameterCollection.Add(new SqlParameter("PageNumber", pageNumber));
-//            parameterCollection.Add(new SqlParameter("PageSize", pageSize));
+        public FeatureCodeSQLRepository(IConfiguration configuration)
+        {
+            DBDataHelper.ConnectionString = configuration.GetConnectionString("DefaultConnection");
+            sqlRepositoryHelper = new sqlRepositoryHelper(configuration);
+        }
 
-//            List<FeatureCode> result = new List<FeatureCode>();
+        public IEnumerable<FeatureCode> GetFeatureCodes(string featureCodeId, int? pageNumber, int? pageSize)
+        {
+            string sql = sqlRepositoryHelper.GetFeatureCodeInfo;
+            List<SqlParameter> parameterCollection = new List<SqlParameter>();
+            parameterCollection.Add(new SqlParameter("FeatureCodeId", featureCodeId));
+            parameterCollection.Add(new SqlParameter("PageNumber", pageNumber));
+            parameterCollection.Add(new SqlParameter("PageSize", pageSize));
 
-//            using (DBDataHelper helper = new DBDataHelper())
-//            {
-//                using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
-//                {
-//                    if (dt.Rows.Count > 0)
-//                    {
-//                        foreach (DataRow dr in dt.Rows)
-//                        {
-//                            result.Add(new FeatureCode()
-//                            {
-//                                FeatureCodeId = dr["FeatureCodeId"] != null ? dr.Field<string>("FeatureCodeId") : string.Empty,
-//                                FeatureCodeName = dr["FeatureCodeId"] != null ? dr.Field<string>("FeatureCodeId") : string.Empty,
-//                                Description = dr["Description"] != null ? dr.Field<string>("Description") : string.Empty,
-//                                RowId = dr.Field<byte[]>("RowId")
-//                            });
-//                        }
-//                    }
-//                }
-//            }
+            List<FeatureCode> result = new List<FeatureCode>();
 
-//            return result;
-//        }
+            using (DBDataHelper helper = new DBDataHelper())
+            {
+                using (DataTable dt = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
+                {
+                    if (dt.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            result.Add(new FeatureCode()
+                            {
+                                FeatureCodeId = dr["FeatureCodeId"] != null ? dr["FeatureCodeId"].ToString() : string.Empty,
+                                FeatureCodeName = dr["FeatureCodeId"] != null ? dr["FeatureCodeId"].ToString() : string.Empty,
+                                Description = dr["Description"] != null ? dr["Description"].ToString() : string.Empty,
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                            });
+                        }
+                    }
+                }
+            }
 
-//        public IEnumerable<FeatureCode> UpdateFeatureCodes(IEnumerable<Upd_VM.FeatureCode> featureCodes)
-//        {
-//            string sql = SQLRepositoryHelper.UpdateFeatureCodes;
-//            List<SqlParameter> parameterCollection = new List<SqlParameter>();
+            return result;
+        }
 
-//            DataTable featureCodesInputTable = new DataTable("FeatureCode_TVP");
-//            featureCodesInputTable.Columns.Add("FeatureCodeId");
-//            featureCodesInputTable.Columns.Add("FeatureCodeName");
-//            featureCodesInputTable.Columns.Add("Description");
-//            featureCodesInputTable.Columns.Add("RowId", typeof(byte[]));
+        public IEnumerable<FeatureCode> UpdateFeatureCodes(IEnumerable<Upd_VM.FeatureCode> featureCodes)
+        {
+            string sql = sqlRepositoryHelper.UpdateFeatureCodes;
+            List<SqlParameter> parameterCollection = new List<SqlParameter>();
 
-//            foreach (Upd_VM.FeatureCode featureCode in featureCodes)
-//            {
-//                featureCodesInputTable.Rows.Add(new object[]
-//                                { 
-//                                    featureCode.FeatureCodeId,
-//                                    featureCode.FeatureCodeName,
-//                                    featureCode.Description,
-//                                    featureCode.RowId
-//                                });
-//            }
+            DataTable featureCodesInputTable = new DataTable("FeatureCode_TVP");
+            featureCodesInputTable.Columns.Add("FeatureCodeId");
+            featureCodesInputTable.Columns.Add("FeatureCodeName");
+            featureCodesInputTable.Columns.Add("Description");
+            featureCodesInputTable.Columns.Add("RowId", typeof(byte[]));
 
-//            SqlParameter inputData = new SqlParameter("Input", featureCodesInputTable);
-//            inputData.SqlDbType = SqlDbType.Structured;
-//            parameterCollection.Add(inputData);
+            foreach (Upd_VM.FeatureCode featureCode in featureCodes)
+            {
+                featureCodesInputTable.Rows.Add(new object[]
+                                {
+                                    featureCode.FeatureCodeId,
+                                    featureCode.FeatureCodeName,
+                                    featureCode.Description,
+                                    featureCode.RowId
+                                });
+            }
 
-//            List<FeatureCode> result = new List<FeatureCode>();
+            SqlParameter inputData = new SqlParameter("Input", featureCodesInputTable);
+            inputData.SqlDbType = SqlDbType.Structured;
+            parameterCollection.Add(inputData);
 
-//            using (DBDataHelper helper = new DBDataHelper())
-//            {
-//                using (DataTable featureCodesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
-//                {
-//                    if (featureCodesOutputTable.Rows.Count > 0)
-//                    {
-//                        foreach (DataRow dr in featureCodesOutputTable.Rows)
-//                        {
-//                            result.Add(new FeatureCode()
-//                            {
-//                                FeatureCodeId = dr["FeatureCodeId"] != null ? dr.Field<string>("FeatureCodeId") : string.Empty,
-//                                FeatureCodeName = dr["FeatureCodeId"] != null ? dr.Field<string>("FeatureCodeId") : string.Empty,
-//                                Description = dr["Description"] != null ? dr.Field<string>("Description") : string.Empty,
-//                                RowId = dr.Field<byte[]>("RowId")
-//                            });
-//                        }
+            List<FeatureCode> result = new List<FeatureCode>();
 
-//                    }
-//                }
-//            }
+            using (DBDataHelper helper = new DBDataHelper())
+            {
+                using (DataTable featureCodesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
+                {
+                    if (featureCodesOutputTable.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in featureCodesOutputTable.Rows)
+                        {
+                            result.Add(new FeatureCode()
+                            {
+                                FeatureCodeId = dr["FeatureCodeId"] != null ? dr["FeatureCodeId"].ToString() : string.Empty,
+                                FeatureCodeName = dr["FeatureCodeId"] != null ? dr["FeatureCodeId"].ToString() : string.Empty,
+                                Description = dr["Description"] != null ? dr["Description"].ToString() : string.Empty,
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                            });
+                        }
 
-//            return result;
-//        }
+                    }
+                }
+            }
 
-//        public IEnumerable<FeatureCode> InsertFeatureCodes(IEnumerable<Ins_VM.FeatureCode> featureCodes)
-//        {
-//            string sql = SQLRepositoryHelper.InsertFeatureCodes;
-//            List<SqlParameter> parameterCollection = new List<SqlParameter>();
+            return result;
+        }
 
-//            DataTable featureCodesInputTable = new DataTable("FeatureCode_TVP");
-//            featureCodesInputTable.Columns.Add("FeatureCodeId");
-//            featureCodesInputTable.Columns.Add("FeatureCodeName");
-//            featureCodesInputTable.Columns.Add("Description");
+        public IEnumerable<FeatureCode> InsertFeatureCodes(IEnumerable<Ins_VM.FeatureCode> featureCodes)
+        {
+            string sql = sqlRepositoryHelper.InsertFeatureCodes;
+            List<SqlParameter> parameterCollection = new List<SqlParameter>();
 
-//            foreach (Ins_VM.FeatureCode featureCode in featureCodes)
-//            {
-//                featureCodesInputTable.Rows.Add(new object[]
-//                                { 
-//                                    featureCode.FeatureCodeId,
-//                                    featureCode.FeatureCodeName,
-//                                    featureCode.Description
-//                                });
-//            }
+            DataTable featureCodesInputTable = new DataTable("FeatureCode_TVP");
+            featureCodesInputTable.Columns.Add("FeatureCodeId");
+            featureCodesInputTable.Columns.Add("FeatureCodeName");
+            featureCodesInputTable.Columns.Add("Description");
 
-//            SqlParameter inputData = new SqlParameter("Input", featureCodesInputTable);
-//            inputData.SqlDbType = SqlDbType.Structured;
-//            parameterCollection.Add(inputData);
+            foreach (Ins_VM.FeatureCode featureCode in featureCodes)
+            {
+                featureCodesInputTable.Rows.Add(new object[]
+                                {
+                                    featureCode.FeatureCodeId,
+                                    featureCode.FeatureCodeName,
+                                    featureCode.Description
+                                });
+            }
 
-//            List<FeatureCode> result = new List<FeatureCode>();
+            SqlParameter inputData = new SqlParameter("Input", featureCodesInputTable);
+            inputData.SqlDbType = SqlDbType.Structured;
+            parameterCollection.Add(inputData);
 
-//            using (DBDataHelper helper = new DBDataHelper())
-//            {
-//                using (DataTable featureCodesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
-//                {
-//                    if (featureCodesOutputTable.Rows.Count > 0)
-//                    {
-//                        foreach (DataRow dr in featureCodesOutputTable.Rows)
-//                        {
-//                            result.Add(new FeatureCode()
-//                            {
-//                                FeatureCodeId = dr["FeatureCodeId"] != null ? dr.Field<string>("FeatureCodeId") : string.Empty,
-//                                FeatureCodeName = dr["FeatureCodeId"] != null ? dr.Field<string>("FeatureCodeId") : string.Empty,
-//                                Description = dr["Description"] != null ? dr.Field<string>("Description") : string.Empty,
-//                                RowId = dr.Field<byte[]>("RowId")
-//                            });
-//                        }
+            List<FeatureCode> result = new List<FeatureCode>();
 
-//                    }
-//                }
-//            }
+            using (DBDataHelper helper = new DBDataHelper())
+            {
+                using (DataTable featureCodesOutputTable = helper.GetDataTable(sql, SQLTextType.Stored_Proc, parameterCollection))
+                {
+                    if (featureCodesOutputTable.Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in featureCodesOutputTable.Rows)
+                        {
+                            result.Add(new FeatureCode()
+                            {
+                                FeatureCodeId = dr["FeatureCodeId"] != null ? dr["FeatureCodeId"].ToString() : string.Empty,
+                                FeatureCodeName = dr["FeatureCodeId"] != null ? dr["FeatureCodeId"].ToString() : string.Empty,
+                                Description = dr["Description"] != null ? dr["Description"].ToString() : string.Empty,
+                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                            });
+                        }
 
-//            return result;
-//        }
+                    }
+                }
+            }
 
-//        public int DeleteFeatureCode(string featureCodeId)
-//        {
-//            string sql = SQLRepositoryHelper.DeleteFeatureCode;
-//            List<SqlParameter> parameterCollection = new List<SqlParameter>();
-//            parameterCollection.Add(new SqlParameter("Input", featureCodeId));
+            return result;
+        }
 
-//            int result = 0;
+        public int DeleteFeatureCode(string featureCodeId)
+        {
+            string sql = sqlRepositoryHelper.DeleteFeatureCode;
+            List<SqlParameter> parameterCollection = new List<SqlParameter>();
+            parameterCollection.Add(new SqlParameter("Input", featureCodeId));
 
-//            using (DBDataHelper helper = new DBDataHelper())
-//            {
-//                result = helper.GetRowsAffected(sql, SQLTextType.Stored_Proc, parameterCollection);
-//            }
+            int result = 0;
 
-//            return result;
-//        }
-//    }
-//}
+            using (DBDataHelper helper = new DBDataHelper())
+            {
+                result = helper.GetRowsAffected(sql, SQLTextType.Stored_Proc, parameterCollection);
+            }
+
+            return result;
+        }
+    }
+}
