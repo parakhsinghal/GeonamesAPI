@@ -1,16 +1,14 @@
-﻿using System;
+﻿using GeonamesAPI.Domain;
+using GeonamesAPI.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using GeonamesAPI.SQLRepository;
-using GeonamesAPI.Domain.Interfaces;
 
 namespace GeonamesAPI.Service.Controllers
 {
-    
-    [Route("api/[controller]")]
+
+    [Route("api/v2/[controller]")]
     public class ContinentController : Controller
     {
         private IContinentRepository repository;
@@ -21,7 +19,7 @@ namespace GeonamesAPI.Service.Controllers
         }
 
         [Route("")]
-        //[ProducesResponseType(typeof(List<Continent>))]
+        [ProducesResponseType(200, Type=typeof(List<Continent>))]
         public IActionResult GetAllContinents()
         {
             try
@@ -38,7 +36,7 @@ namespace GeonamesAPI.Service.Controllers
         }
 
         [Route("keyvalue")]
-        //[ProducesResponseType(typeof(Dictionary<long, string>))]
+        [ProducesResponseType(200, Type=typeof(Dictionary<long, string>))]
         public IActionResult GetContinentsAsDictionary()
         {
             try
@@ -58,7 +56,9 @@ namespace GeonamesAPI.Service.Controllers
         [Route("{continentCodeId:length(2):alpha}")]
         [Route("{geonameId:long}")]
         [Route("{continentName:minlength(4):alpha}")]
-        //[ProducesResponseType(typeof(Continent))]
+        [ProducesResponseType(200, Type=typeof(Continent))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public IActionResult GetContinentInfo(string continentCodeId = null, int? geonameId = null, string continentName = null)
         {
             try
@@ -100,7 +100,9 @@ namespace GeonamesAPI.Service.Controllers
         [Route("{continentCodeId:length(2):alpha}/countries")]
         [Route("{geonameId:long}/countries")]
         [Route("{continentName:minlength(4):alpha}/countries")]
-        //[ProducesResponseType(typeof(List<Country>))]
+        [ProducesResponseType(200, Type=typeof(List<Country>))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public IActionResult GetCountriesInAContinent(string continentName = null, string continentCodeId = null, int? geonameId = null,
 int? pageNumber = null, int? pageSize = null)
         {
@@ -149,7 +151,9 @@ int? pageNumber = null, int? pageSize = null)
         [Route("{continentCodeId:length(2):alpha}/countries/keyvalue")]
         [Route("{geonameId:long}/countries/keyvalue")]
         [Route("{continentName:minlength(4):alpha}/countries/keyvalue")]
-        //[ProducesResponseType(typeof(KeyValuePair<long?, string>))]
+        [ProducesResponseType(200, Type=typeof(KeyValuePair<long?, string>))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public IActionResult GetCountriesInAContinentAsDictionary(string continentName = null, string continentCodeId = null, int? geonameId = null)
         {
             try

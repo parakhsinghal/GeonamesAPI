@@ -4,7 +4,7 @@ using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
 
 namespace GeonamesAPI.Domain.Interfaces
 {
-    public interface IFeatureCode
+    public interface IFeatureCodeRepository
     {
         IEnumerable<FeatureCode> GetFeatureCodes(string featureCodeId, int? pageNumber, int? pageSize);
 

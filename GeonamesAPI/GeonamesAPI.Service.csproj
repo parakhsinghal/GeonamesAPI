@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -23,6 +23,22 @@
   <ItemGroup>
     <ProjectReference Include="..\GeonamesAPI.Domain\GeonamesAPI.Domain.csproj" />
     <ProjectReference Include="..\GeonamesAPI.SQLRepository\GeonamesAPI.SQLRepository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ErrorMessages\ErrorMessages_US-en.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ErrorMessages_US-en.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="ErrorMessages\ErrorMessages_US-en.resx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ErrorMessages_US-en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

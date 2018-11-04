@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace GeonamesAPI.SQLRepository
 {
-    public class FeatureCodeSQLRepository : IFeatureCode
+    public class FeatureCodeSQLRepository : IFeatureCodeRepository
     {
         private readonly sqlRepositoryHelper sqlRepositoryHelper;
 

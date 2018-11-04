@@ -9,7 +9,7 @@ using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
 using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
 using System;
 using Microsoft.Extensions.Configuration;
-
+using System.Text;
 
 namespace GeonamesAPI.SQLRepository
 {
@@ -53,7 +53,7 @@ namespace GeonamesAPI.SQLRepository
                                 FeatureCategoryId = dr["FeatureCategoryId"].ToString(),
                                 FeatureCodeId = dr["FeatureCodeId"].ToString(),
                                 TimeZoneId = dr["TimeZoneId"].ToString(),
-                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                                RowId = dr["RowId"] as byte[]
                             });
                         }
                     }
@@ -105,7 +105,7 @@ int? pageNumber = null, int? pageSize = null)
                                 GeonameId = dr["GeonameId"] == DBNull.Value ? 0 : int.Parse(dr["GeonameId"].ToString()),
                                 Neighbors = dr["Neighbors"].ToString(),
                                 EquivalentFipsCode = dr["EquivalentFipsCode"].ToString(),
-                                RowId = System.Text.Encoding.UTF32.GetBytes(dr["RowId"].ToString())
+                                RowId = dr["RowId"] as byte[]
                             });
                         }
                     }

@@ -21,9 +21,12 @@ namespace GeonamesAPI
         {
             services.AddMvc();
             services.AddSingleton<IContinentRepository, ContinentSQLRepository>();
-            //services.AddSingleton<ICountryRepository, CountrySQLRepository>();
-            //services.AddSingleton<IFeatureCategoryRepository, FeatureCategorySQLRepository>();
-
+            services.AddSingleton<ICountryRepository, CountrySQLRepository>();
+            services.AddSingleton<IFeatureCategoryRepository, FeatureCategorySQLRepository>();
+            services.AddSingleton<IFeatureCodeRepository, FeatureCodeSQLRepository>();
+            services.AddSingleton<ITimeZoneRepository, TimeZoneSQLRepository>();
+            services.AddSingleton<ILanguageCodeRepository, LanguageCodeSQLRepository>();
+            services.AddSingleton<IRawPostalRepository, RawPostalSQLRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
