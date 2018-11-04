@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using GeonamesAPI.Domain.Interfaces;
 using GeonamesAPI.SQLRepository;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GeonamesAPI
 {
@@ -27,6 +30,23 @@ namespace GeonamesAPI
             services.AddSingleton<ITimeZoneRepository, TimeZoneSQLRepository>();
             services.AddSingleton<ILanguageCodeRepository, LanguageCodeSQLRepository>();
             services.AddSingleton<IRawPostalRepository, RawPostalSQLRepository>();
+
+            services.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(majorVersion: 2, minorVersion: 0);
+            });
+            
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v2", new Info()
+                {
+                    Title = "Geonames API",
+                    Version = "v2",                    
+                });
+                options.CustomSchemaIds(x=>x.FullName);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,7 +56,8 @@ namespace GeonamesAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseSwagger();
+            app.UseSwaggerUI(options=>options.SwaggerEndpoint("/swagger/v2/swagger.json", "Geonames API V2"));
             app.UseMvc();
         }
     }

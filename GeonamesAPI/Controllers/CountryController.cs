@@ -8,7 +8,8 @@ using System.Linq;
 
 namespace GeoDataAPI.Service.Controllers
 {
-    [Route("api/v2/[controller]")]
+    [ApiVersion(version: "2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class CountryController : Controller
     {
         private ICountryRepository repository;

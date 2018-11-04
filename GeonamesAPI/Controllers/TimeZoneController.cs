@@ -10,7 +10,8 @@ using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
 
 namespace GeoDataAPI.Service.Controllers
 {
-    [Route("api/v2/[controller]")]
+    [ApiVersion(version: "2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class TimeZoneController : Controller
     {
         private ITimeZoneRepository repository;

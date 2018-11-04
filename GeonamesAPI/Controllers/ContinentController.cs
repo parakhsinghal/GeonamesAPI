@@ -7,8 +7,8 @@ using System.Linq;
 
 namespace GeonamesAPI.Service.Controllers
 {
-
-    [Route("api/v2/[controller]")]
+    [ApiVersion(version:"2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class ContinentController : Controller
     {
         private IContinentRepository repository;
@@ -18,6 +18,7 @@ namespace GeonamesAPI.Service.Controllers
             this.repository = _repository;
         }
 
+        [HttpGet]
         [Route("")]
         [ProducesResponseType(200, Type=typeof(List<Continent>))]
         public IActionResult GetAllContinents()
@@ -35,6 +36,7 @@ namespace GeonamesAPI.Service.Controllers
 
         }
 
+        [HttpGet]
         [Route("keyvalue")]
         [ProducesResponseType(200, Type=typeof(Dictionary<long, string>))]
         public IActionResult GetContinentsAsDictionary()
@@ -53,6 +55,7 @@ namespace GeonamesAPI.Service.Controllers
 
         }
 
+        [HttpGet]
         [Route("{continentCodeId:length(2):alpha}")]
         [Route("{geonameId:long}")]
         [Route("{continentName:minlength(4):alpha}")]
@@ -97,6 +100,7 @@ namespace GeonamesAPI.Service.Controllers
             }
         }
 
+        [HttpGet]
         [Route("{continentCodeId:length(2):alpha}/countries")]
         [Route("{geonameId:long}/countries")]
         [Route("{continentName:minlength(4):alpha}/countries")]
@@ -148,6 +152,7 @@ int? pageNumber = null, int? pageSize = null)
             }
         }
 
+        [HttpGet]
         [Route("{continentCodeId:length(2):alpha}/countries/keyvalue")]
         [Route("{geonameId:long}/countries/keyvalue")]
         [Route("{continentName:minlength(4):alpha}/countries/keyvalue")]

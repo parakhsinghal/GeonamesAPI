@@ -11,7 +11,8 @@ using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
 
 namespace GeoDataAPI.Service.Controllers
 {
-    [Route("api/v2/[controller]")]
+    [ApiVersion(version: "2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class LanguageController : Controller
     {
         private ILanguageCodeRepository repository;
@@ -66,7 +67,7 @@ namespace GeoDataAPI.Service.Controllers
 
         [HttpGet]
         [Route("{iso6393Code:length(3):alpha}")]
-        [Route("{language:minlength(4):regex([a-zA-Z]+[ a-zA-Z-_]*)}")]
+        [Route("{language:minlength(4):regex([[a-zA-Z]]+[[ a-zA-Z-_]]*)}")]
         [ProducesResponseType(200, Type = typeof(LanguageCode))]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
@@ -197,7 +198,7 @@ namespace GeoDataAPI.Service.Controllers
         //[Authorize]
         [HttpPut]
         [Route("{iso6393Code:length(3):alpha}")]
-        [Route("{language:minlength(4):regex([a-zA-Z]+[ a-zA-Z-_]*)}")]
+        [Route("{language:minlength(4):regex([[a-zA-Z]]+[[ a-zA-Z-_]]*)}")]
         [ProducesResponseType(200, Type=typeof(Upd_VM.LanguageCode))]
         [ProducesResponseType(500)]
         [ProducesResponseType(400)]

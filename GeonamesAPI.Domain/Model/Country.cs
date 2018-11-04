@@ -25,6 +25,5 @@ namespace GeonamesAPI.Domain
         public string Neighbors { get; set; }
         public string EquivalentFipsCode { get; set; }
         public byte[] RowId { get; set; }
-        public string Rowversion { get { return Convert.ToBase64String(RowId); } }
     }
 }

@@ -11,7 +11,8 @@ using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
 
 namespace GeoDataAPI.Service.Controllers
 {
-    [Route("api/v2/[controller]")]
+    [ApiVersion(version: "2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class FeatureCodeController : Controller
     {
         private IFeatureCodeRepository repository;
@@ -21,6 +22,7 @@ namespace GeoDataAPI.Service.Controllers
             this.repository = _repository;
         }
 
+        [HttpGet]
         [Route("")]
         [ProducesResponseType(200, Type=typeof(List<FeatureCode>))]
         [ProducesResponseType(404)]
