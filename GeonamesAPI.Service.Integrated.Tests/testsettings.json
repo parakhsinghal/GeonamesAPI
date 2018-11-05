@@ -1,0 +1,66 @@
+{
+  "General": {
+    "ServerURL": "http://localhost:10407/api/v2/",
+    "JSONMediaType": "application/json",
+    "XMLMediaType": "application/xml",
+    "JSONFormatParameter": "?format=json",
+    "XMLFormatParameter": "?format=xml",
+    "KeyValueSegment": "/keyvalue",
+    "StateSegment": "/states",
+    "CitySegment": "/cities",
+    "CountrySegment": "/countries",
+    "PageSizeSegment": "pageSize=10",
+    "PageNumberSegment": "pageNumber=1",
+    "ExpectedResultCount": "10"
+  },
+
+  "Continent": {
+    "ContinentControllerSegment": "continent",
+    "ContinentName": "Asia",
+    "ContinentGeonameId": "6255147",
+    "ContinentCodeId": "AS"
+  },
+
+  "Country": {
+    "CountryController": "country",
+    "CountryName": "India",
+    "CountryGeonameId": "1269750",
+    "ISOCountryCode": "IN",
+    "ISO3Code": "IND",
+    "ISONumeric": "356",
+    "StateName": "State of Rajasthan",
+    "StateGeonameId": "1258899",
+    "CityName": "Ajmer",
+    "CityGeonameId": "1279160",
+    "Latitude": "22",
+    "Longitude": "79"
+  },
+
+  "Language": {
+    "LanguageControllerSegment": "language",
+    "LanguageName": "Hindi",
+    "ISO6393Code": "hin"
+  },
+
+  "TimeZone": {
+    "TimeZoneControllerSegment": "timezone",
+    "TimeZoneId": "Asia/Kolkata",
+    "TimeZonePlaceSegment": "/place",
+    "TimeZoneListSegment": "/list"
+  },
+
+  "FeatureCategory": {
+    "FeatureCategoryControllerSegment": "featurecategory",
+    "FeatureCategoryId": "A"
+  },
+
+  "FeatureCode": {
+    "FeatureCodeControllerSegment": "featurecode",
+    "FeatureCode": "A.ADM1"
+  },
+
+  "PostalCode": {
+    "RawPostalCodeControllerSegment": "postalcode",
+    "PostalCode": "110001"
+  }
+}

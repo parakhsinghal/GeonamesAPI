@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace GeonamesAPI.Service.Controllers
 {
+    [FormatFilter]
     [ApiVersion(version:"2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class ContinentController : Controller

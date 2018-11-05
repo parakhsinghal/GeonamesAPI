@@ -17,6 +17,7 @@ namespace GeonamesAPI.SQLRepository.Helper
             stateSection = config.GetSection("SQLRepository").GetSection("StateSQLRepository");
             rawPostalCodeSection = config.GetSection("SQLRepository").GetSection("RawPostalCode");
         }
+
         #region Continent
 
         public string GetContinentInfo { get { return continentSection["GetContinentInfo"]; } }

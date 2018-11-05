@@ -7,9 +7,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="testsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="testsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeonamesAPI.Domain\GeonamesAPI.Domain.csproj" />
+    <ProjectReference Include="..\GeonamesAPI.SQLRepository\GeonamesAPI.SQLRepository.csproj" />
+    <ProjectReference Include="..\GeonamesAPI\GeonamesAPI.Service.csproj" />
   </ItemGroup>
 
 </Project>

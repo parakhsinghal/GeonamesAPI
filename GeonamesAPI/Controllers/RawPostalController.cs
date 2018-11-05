@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace GeoDataAPI.Service.Controllers
+namespace GeonamesAPI.Service.Controllers
 {
     [ApiVersion(version: "2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]

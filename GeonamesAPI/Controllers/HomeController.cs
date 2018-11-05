@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GeoDataAPI.Service.Controllers
+namespace GeonamesAPI.Service.Controllers
 {
     public class HomeController : Controller
     {

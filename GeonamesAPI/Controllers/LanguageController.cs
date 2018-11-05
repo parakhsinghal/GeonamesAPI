@@ -9,7 +9,7 @@ using ErrMsgs = GeonamesAPI.Service.ErrorMessages;
 using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
 using Upd_VM = GeonamesAPI.Domain.ViewModels.Update;
 
-namespace GeoDataAPI.Service.Controllers
+namespace GeonamesAPI.Service.Controllers
 {
     [ApiVersion(version: "2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
