@@ -116,7 +116,7 @@ CREATE TABLE dbo.RawData
     FeatureCategoryId	char(1)			NULL,
     FeatureCodeId		nvarchar(16)	NULL,
     ISOCountryCode		char(2)			NULL,
-    CC2					nvarchar(60)	NULL,
+    CC2					nvarchar(200)	NULL,
     Admin1Code			nvarchar(20)	NULL,
     Admin2Code			nvarchar(80)	NULL,
     Admin3Code			nvarchar(20)	NULL,
