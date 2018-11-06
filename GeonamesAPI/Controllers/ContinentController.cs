@@ -39,21 +39,21 @@ namespace GeonamesAPI.Service.Controllers
 
         [HttpGet]
         [Route("keyvalue")]
-        [ProducesResponseType(200, Type=typeof(Dictionary<long, string>))]
+        [ProducesResponseType(200, Type=typeof(KeyValuePair<long, string>))]
         public IActionResult GetContinentsAsDictionary()
         {
             try
             {
-                return Ok(repository.GetContinentInfo(continentCodeId: null, geonameId: null, continentName: null)
+                var result = repository.GetContinentInfo(continentCodeId: null, geonameId: null, continentName: null)
                                             .ToDictionary(item => item.GeonameId, item => item.ContinentName)
-                                            .OrderBy(item => item.Value));
+                                            .OrderBy(item => item.Value);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 //Debug.WriteLine(ex);
                 throw;
             }
-
         }
 
         [HttpGet]

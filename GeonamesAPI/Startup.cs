@@ -38,7 +38,7 @@ namespace GeonamesAPI
             services.AddSingleton<IFeatureCodeRepository, FeatureCodeSQLRepository>();
             services.AddSingleton<ITimeZoneRepository, TimeZoneSQLRepository>();
             services.AddSingleton<ILanguageCodeRepository, LanguageCodeSQLRepository>();
-            services.AddSingleton<IRawPostalRepository, RawPostalSQLRepository>();
+            services.AddSingleton<IPostalCodeRepository, RawPostalSQLRepository>();
 
             services.AddApiVersioning(options =>
             {

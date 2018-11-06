@@ -11,11 +11,11 @@ namespace GeonamesAPI.Service.Controllers
     [FormatFilter]
     [ApiVersion(version: "2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class RawPostalController : Controller
+    public class PostalCodeController : Controller
     {
-        private IRawPostalRepository repository;
+        private IPostalCodeRepository repository;
 
-        public RawPostalController(IRawPostalRepository _repository)
+        public PostalCodeController(IPostalCodeRepository _repository)
         {
             this.repository = _repository;
         }
