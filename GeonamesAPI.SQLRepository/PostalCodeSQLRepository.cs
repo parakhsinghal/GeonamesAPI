@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace GeonamesAPI.SQLRepository
 {
-    public class RawPostalSQLRepository : IRawPostalRepository
+    public class RawPostalSQLRepository : IPostalCodeRepository
     {
         private readonly sqlRepositoryHelper sqlRepositoryHelper;
 
