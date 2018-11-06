@@ -4,7 +4,7 @@ using Ins_VM = GeonamesAPI.Domain.ViewModels.Insert;
 
 namespace GeonamesAPI.Domain.Interfaces
 {
-    public interface IRawPostalRepository
+    public interface IPostalCodeRepository
     {
         IEnumerable<RawPostal> GetPostalInfo(string isoCountryCode = null, string countryName = null, string postalCode = null, int? pageNumber = null, int? pageSize = null);
 
