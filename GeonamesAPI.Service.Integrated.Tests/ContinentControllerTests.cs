@@ -314,22 +314,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
 
             //Assert
             Assert.AreEqual<string>(expected, actual);
-        }
-
-        [TestMethod]
-        public void GetContinentsAsDictionary_ChangedAcceptHeader_ReturnsValidXMLResponse()
-        {
-            //Arrange
-            requestURL = serverURL + continentControllerSegment + keyValueSegment;
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(xmlMediaType));
-
-            //Act
-            string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
-            string expected = xmlMediaType;
-
-            //Assert
-            Assert.AreEqual<string>(expected, actual);
-        }
+        }      
 
         [TestMethod]
         public void GetContinentsAsDictionary_ChangedAcceptHeader_ReturnsValidJSONResponse()
@@ -358,21 +343,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
 
             //Assert
             Assert.AreEqual<string>(expected, actual);
-        }
-
-        [TestMethod]
-        public void GetContinentsAsDictionary_PassedQueryStringParameter_ReturnsValidXMLResponse()
-        {
-            //Arrange
-            requestURL = serverURL + continentControllerSegment + keyValueSegment + xmlFormatParameter;
-
-            //Act
-            string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
-            string expected = xmlMediaType;
-
-            //Assert
-            Assert.AreEqual<string>(expected, actual);
-        }
+        }      
 
         #endregion
 
@@ -831,21 +802,6 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
         }
 
         [TestMethod]
-        public void GetCountriesInAContinentAsDictionary_ChangedAcceptHeader_ReturnsValidXMLResponse()
-        {
-            //Arrange
-            requestURL = serverURL + continentControllerSegment + @"/" + expectedContinentCodeId + countrySegment + keyValueSegment;
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(xmlMediaType));
-
-            //Act
-            string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
-            string expected = xmlMediaType;
-
-            //Assert
-            Assert.AreEqual<string>(expected, actual);
-        }
-
-        [TestMethod]
         public void GetCountriesInAContinentAsDictionary_ChangedAcceptHeader_ReturnsValidJSONResponse()
         {
             //Arrange
@@ -869,20 +825,6 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             //Act
             string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
             string expected = jsonMediaType;
-
-            //Assert
-            Assert.AreEqual<string>(expected, actual);
-        }
-
-        [TestMethod]
-        public void GetCountriesInAContinentAsDictionary_PassedQueryStringParameter_ReturnsValidXMLResponse()
-        {
-            //Arrange
-            requestURL = serverURL + continentControllerSegment + @"/" + expectedContinentCodeId + countrySegment + keyValueSegment + xmlFormatParameter;
-
-            //Act
-            string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
-            string expected = xmlMediaType;
 
             //Assert
             Assert.AreEqual<string>(expected, actual);

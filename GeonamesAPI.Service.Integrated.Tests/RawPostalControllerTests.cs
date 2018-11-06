@@ -47,7 +47,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
         private string expectedISOCountryCode = string.Empty;
         private string expectedPostalCode = string.Empty;
         private string rawPostalCodeControllerSegment = string.Empty;
-        private RawPostalController rawPostalControllerObject;
+        private PostalCodeController postalControllerObject;
 
         [TestInitialize]
         public void InitializelocalFields()
@@ -68,7 +68,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             expectedPostalCode = postalcodeSection["PostalCode"];
             expectedISOCountryCode = countrySection["ISOCountryCode"];
             rawPostalCodeControllerSegment = postalcodeSection["RawPostalCodeControllerSegment"];
-            rawPostalControllerObject = new RawPostalController(new RawPostalSQLRepository(config));
+            postalControllerObject = new PostalCodeController(new RawPostalSQLRepository(config));
         }
 
         [TestCleanup]
@@ -90,7 +90,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             expectedPostalCode = string.Empty;
             expectedISOCountryCode = string.Empty;
             rawPostalCodeControllerSegment = string.Empty;
-            rawPostalControllerObject = null;
+            postalControllerObject = null;
         }
 
         #endregion
@@ -107,7 +107,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             //Act
 
             //Assert
-            Assert.IsNotNull(rawPostalControllerObject);
+            Assert.IsNotNull(postalControllerObject);
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             //Act
 
             //Assert
-            Assert.IsInstanceOfType(rawPostalControllerObject, typeof(RawPostalController));
+            Assert.IsInstanceOfType(postalControllerObject, typeof(PostalCodeController));
         }
 
         #endregion

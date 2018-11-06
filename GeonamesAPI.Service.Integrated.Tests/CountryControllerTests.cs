@@ -76,6 +76,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             expectedStateGeonameId = long.Parse(countrySection["StateGeonameId"]);
             expectedCityName = countrySection["CityName"];
             expectedCityGeonameId = long.Parse(countrySection["CityGeonameId"]);
+            expectedCountryName = countrySection["CountryName"];
             clientHandler = new HttpClientHandler() { UseDefaultCredentials = true };
             client = new HttpClient(clientHandler);
 

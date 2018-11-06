@@ -467,22 +467,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
 
             //Assert
             Assert.AreEqual<string>(expected, actual);
-        }
-
-        [TestMethod]
-        public void GetLanguageCodesAsDictionary_ChangedAcceptHeader_ReturnsValidXMLResponse()
-        {
-            //Arrange
-            requestURL = serverURL + languageControllerSegment + keyValueSegment;
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(xmlMediaType));
-
-            //Act
-            string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
-            string expected = xmlMediaType;
-
-            //Assert
-            Assert.AreEqual<string>(expected, actual);
-        }
+        }       
 
         [TestMethod]
         public void GetLanguageCodesAsDictionary_ChangedAcceptHeader_ReturnsValidJSONResponse()
@@ -508,20 +493,6 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             //Act
             string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
             string expected = jsonMediaType;
-
-            //Assert
-            Assert.AreEqual<string>(expected, actual);
-        }
-
-        [TestMethod]
-        public void GetLanguageCodesAsDictionary_PassedQueryStringParameter_ReturnsValidXMLResponse()
-        {
-            //Arrange
-            requestURL = serverURL + languageControllerSegment + keyValueSegment + xmlFormatParameter;
-
-            //Act
-            string actual = client.GetAsync(requestURL).Result.Content.Headers.ContentType.MediaType;
-            string expected = xmlMediaType;
 
             //Assert
             Assert.AreEqual<string>(expected, actual);

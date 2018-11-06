@@ -75,7 +75,7 @@ namespace GeonamesAPI.Service.Integrated.Tests.Controllers
             expectedISONumericCountryCode = countrySection["ISONumeric"];
             expectedLatitude = double.Parse(countrySection["Latitude"].ToString());
             expectedLongitude = double.Parse(countrySection["Longitude"].ToString());
-            expectedTimeZone = countrySection["TimeZoneId"];
+            expectedTimeZone = timezoneSection["TimeZoneId"];
             expectedStateName = countrySection["StateName"];
             expectedCityName = countrySection["CityName"];
             clientHandler = new HttpClientHandler() { UseDefaultCredentials = true };
